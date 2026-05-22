@@ -199,7 +199,7 @@ Designed with a premium UI/UX inspired by:
 * Cloudinary
 * AWS S3
 * Vercel
-* Render / Railway
+* Render 
 
 ## Realtime & Communication
 
@@ -268,31 +268,9 @@ npm install
 
 ---
 
-# 3️⃣ Configure Environment Variables
 
-## Backend `.env`
 
-```env
-PORT=5000
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-```
-
-## Frontend `.env`
-
-```env
-VITE_API_URL=http://localhost:5000
-VITE_GOOGLE_CLIENT_ID=your_google_client_id
-```
-
----
-
-# 4️⃣ Run Application
+# 3️⃣ Run Application
 
 ## Backend
 
@@ -315,12 +293,10 @@ npm run dev
 ## Frontend Deployment
 
 * Vercel
-* Netlify
 
 ## Backend Deployment
 
 * Render
-* Railway
 
 ## Database
 
