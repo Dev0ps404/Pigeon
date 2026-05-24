@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const ENDPOINT = 'http://localhost:5001';
+const ENDPOINT = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 let socket;
 
 export const initiateSocketConnection = () => {
