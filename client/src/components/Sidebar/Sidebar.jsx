@@ -57,7 +57,7 @@ const Sidebar = () => {
         minWidth: leftNavSidebarCollapsed ? 80 : 270,
       }}
       transition={{ duration: 0.4, ease: [0.25, 0.8, 0.25, 1] }}
-      className="hidden md:flex flex-col h-full bg-[#0c1226]/75 border-r border-white/5 z-20 overflow-y-auto overflow-x-hidden backdrop-blur-3xl scrollbar-thin select-none"
+      className="hidden md:flex flex-col h-full bg-[#0b0f19] border-r border-white/[0.04] z-20 overflow-y-auto overflow-x-hidden select-none scrollbar-none"
     >
       {/* ── Branding ── */}
       <div
@@ -75,7 +75,7 @@ const Sidebar = () => {
               />
             </div>
             {/* Pulse green dot over Pigeon Logo */}
-            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-[#0c1226] shadow-[0_0_8px_rgba(34,197,94,0.6)]">
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full ring-2 ring-[#0b0f19] shadow-[0_0_8px_rgba(34,197,94,0.6)]">
               <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
             </span>
           </div>
@@ -120,7 +120,7 @@ const Sidebar = () => {
               <p className="text-[13px] font-bold text-white uppercase tracking-wide truncate">
                 {user?.username || "DEVANSH AGARWAL"}
               </p>
-              <p className="text-[11px] text-slate-450 truncate mt-0.5">
+              <p className="text-[11px] text-slate-400 truncate mt-0.5">
                 {user?.email || "devansh.agarwal_cs24@gla.ac.in"}
               </p>
             </div>
@@ -129,7 +129,7 @@ const Sidebar = () => {
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
               SESSION STATUS
             </span>
-            <span className="text-[10px] font-extrabold text-sky-455 flex items-center gap-1.5">
+            <span className="text-[10px] font-extrabold text-sky-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
               0.08ms | ACTIVE
             </span>
@@ -150,7 +150,7 @@ const Sidebar = () => {
               referrerPolicy="no-referrer"
               className="w-10 h-10 rounded-xl object-cover border border-white/10"
             />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0c1226] shadow-[0_0_8px_rgba(34,197,94,0.6)]">
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0b0f19] shadow-[0_0_8px_rgba(34,197,94,0.6)]">
               <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
             </span>
           </div>
@@ -196,7 +196,7 @@ const Sidebar = () => {
 
       {/* ── Premium Call-to-Action ── */}
       {!leftNavSidebarCollapsed && (
-        <div className="mx-4 my-4 p-4 rounded-2xl bg-gradient-to-tr from-blue-600/95 via-indigo-600/95 to-purple-650/95 text-white shadow-lg shadow-blue-500/15 relative overflow-hidden group">
+        <div className="mx-4 my-4 p-4 rounded-2xl bg-gradient-to-tr from-blue-600/95 via-indigo-650/95 to-purple-650/95 text-white shadow-lg shadow-blue-500/15 relative overflow-hidden group">
           {/* Subtle Ambient Shapes */}
           <div className="absolute -right-4 -bottom-4 w-16 h-16 rounded-full bg-white/10 blur-xl group-hover:scale-125 transition-transform duration-500" />
           <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-sky-400/20 blur-xl group-hover:scale-125 transition-transform duration-500" />
@@ -221,7 +221,7 @@ const Sidebar = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleLogout}
-          className={`flex items-center justify-center border border-white/[0.08] hover:border-red-500/30 bg-[#161f38]/30 hover:bg-red-500/10 text-slate-350 hover:text-red-400 rounded-xl transition-all duration-200 group relative ${
+          className={`flex items-center justify-center border border-white/[0.08] hover:border-red-500/30 bg-[#161f38]/30 hover:bg-red-500/10 text-slate-300 hover:text-red-400 rounded-xl transition-all duration-200 group relative ${
             leftNavSidebarCollapsed
               ? "w-11 h-11"
               : "w-full py-2.5 px-4 gap-2 text-sm font-semibold shadow-sm"
