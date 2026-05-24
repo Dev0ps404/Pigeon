@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -85,7 +85,7 @@
   color: #f8fafc !important;
 }
 
-.theme-cyberpunk .dark\:bg-dark-card, 
+.theme-cyberpunk .dark\:bg-dark-card,
 .theme-cyberpunk .bg-dark-card {
   background-color: rgba(22, 11, 44, 0.7) !important;
   backdrop-filter: blur(16px);
@@ -101,9 +101,9 @@
   body {
     @apply bg-gray-50 text-gray-900 transition-colors duration-300 font-sans;
   }
-  
+
   .dark body {
-    background-color: #0B1020 !important;
+    background-color: #0b1020 !important;
     color: #f8fafc;
   }
 }
@@ -112,11 +112,11 @@
   .glass-panel {
     @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg;
   }
-  
+
   .dark .glass-panel {
     @apply bg-[#111827]/40 border-white/5 shadow-black/20 backdrop-blur-2xl;
   }
-  
+
   .glass-panel-premium {
     background: rgba(17, 24, 39, 0.45) !important;
     backdrop-filter: blur(24px);
@@ -134,7 +134,9 @@
   .glass-card-premium:hover {
     background: rgba(255, 255, 255, 0.06) !important;
     border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), 0 0 15px rgba(59, 130, 246, 0.15);
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.2),
+      0 0 15px rgba(59, 130, 246, 0.15);
     transform: translateY(-2px);
   }
 
@@ -154,11 +156,11 @@
   .btn-primary {
     @apply px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-xl font-medium shadow-md shadow-primary-500/20 hover:shadow-lg hover:shadow-primary-500/30 transition-all active:scale-95;
   }
-  
+
   .btn-secondary {
     @apply px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-xl font-medium shadow-sm hover:bg-gray-50 transition-all active:scale-95;
   }
-  
+
   .dark .btn-secondary {
     @apply bg-dark-card border-dark-border text-gray-200 hover:bg-dark-border;
   }
@@ -166,7 +168,7 @@
   .input-field {
     @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all;
   }
-  
+
   .dark .input-field {
     @apply bg-[#0b1020]/60 border-white/5 text-white focus:ring-primary-500/50 focus:border-primary-500 backdrop-blur-md;
   }
@@ -200,10 +202,18 @@
 
 /* Mesh Gradient background animations */
 @keyframes floatBlob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.95); }
-  100% { transform: translate(0px, 0px) scale(1); }
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
 }
 
 .animate-blob-slow {
@@ -217,4 +227,3 @@
 .animate-blob-slowest {
   animation: floatBlob 24s infinite ease-in-out;
 }
-
