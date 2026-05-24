@@ -194,26 +194,6 @@ const Sidebar = () => {
         })}
       </div>
 
-      {/* ── Premium Call-to-Action ── */}
-      {!leftNavSidebarCollapsed && (
-        <div className="mx-4 my-4 p-4 rounded-2xl bg-gradient-to-tr from-blue-600/95 via-indigo-650/95 to-purple-650/95 text-white shadow-lg shadow-blue-500/15 relative overflow-hidden group">
-          {/* Subtle Ambient Shapes */}
-          <div className="absolute -right-4 -bottom-4 w-16 h-16 rounded-full bg-white/10 blur-xl group-hover:scale-125 transition-transform duration-500" />
-          <div className="absolute -left-4 -top-4 w-12 h-12 rounded-full bg-sky-400/20 blur-xl group-hover:scale-125 transition-transform duration-500" />
-          
-          <div className="relative z-10 text-left">
-            <span className="inline-flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-widest text-sky-200">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Insight
-            </span>
-            <p className="text-[11px] font-bold leading-relaxed mt-2 text-white/95 text-pretty">
-              Experience the future of messaging. Connect securely with high-definition audio & video calls.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* ── Logout Button ── */}
       <div className={`mt-auto ${leftNavSidebarCollapsed ? "px-3 flex justify-center py-4" : "px-4 py-4"}`}>
