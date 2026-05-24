@@ -406,10 +406,10 @@ const ChatWindow = ({ isTyping }) => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', bounce: 0.4, delay: 0.1 }}
-            className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2rem] flex items-center justify-center shadow-2xl relative mb-8 backdrop-blur-xl group hover:border-white/20 transition-all duration-300"
+            className="w-24 h-24 bg-slate-200/50 dark:bg-white/5 border border-slate-300/30 dark:border-white/10 rounded-[2.5rem] flex items-center justify-center shadow-2xl relative mb-8 backdrop-blur-xl group hover:border-slate-350/50 dark:hover:border-white/20 transition-all duration-300"
           >
-            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-blue-500 to-indigo-600 opacity-20 blur-md group-hover:opacity-40 transition-opacity" />
-            <PigeonLogo className="w-12 h-12 relative z-10" variant="silhouette" color="white" />
+            <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-blue-500 to-indigo-600 opacity-10 dark:opacity-20 blur-md group-hover:opacity-30 dark:group-hover:opacity-40 transition-opacity" />
+            <PigeonLogo className="w-12 h-12 relative z-10" variant="gradient" />
           </motion.div>
 
           {/* End-to-End Encrypted Badge */}
@@ -417,10 +417,10 @@ const ChatWindow = ({ isTyping }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="flex items-center gap-2 bg-white/5 border border-white/5 text-gray-400 px-4 py-2 rounded-full mb-6 shadow-lg backdrop-blur-md"
+            className="flex items-center gap-2 bg-slate-200/50 dark:bg-white/5 border border-slate-300/20 dark:border-white/5 text-slate-500 dark:text-gray-400 px-4 py-2 rounded-full mb-6 shadow-md dark:shadow-lg backdrop-blur-md"
           >
-            <FiLock className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
-            <span className="text-[10px] font-black tracking-widest uppercase text-gray-400">End-to-End Encrypted</span>
+            <FiLock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-450 animate-pulse" />
+            <span className="text-[10px] font-black tracking-widest uppercase text-slate-500 dark:text-gray-400">End-to-End Encrypted</span>
           </motion.div>
 
           {/* Welcome Text */}
@@ -428,7 +428,7 @@ const ChatWindow = ({ isTyping }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.4 }}
-            className="text-3xl md:text-4xl font-black tracking-tight text-white mb-3 text-center bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent"
+            className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-slate-900 via-slate-805 to-slate-700 dark:from-white dark:to-gray-400 bg-clip-text text-transparent mb-3 text-center"
           >
             Welcome to Pigeon Terminal
           </motion.h2>
@@ -438,7 +438,7 @@ const ChatWindow = ({ isTyping }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.4 }}
-            className="text-center text-gray-400 max-w-sm mb-8 leading-relaxed text-sm font-semibold"
+            className="text-center text-slate-500 dark:text-gray-400 max-w-sm mb-8 leading-relaxed text-sm font-semibold"
           >
             A premium real-time communications workspace. Choose an active transmission or start a new message to begin.
           </motion.p>
@@ -450,11 +450,11 @@ const ChatWindow = ({ isTyping }) => {
             transition={{ delay: 0.6, duration: 0.4 }}
             className="flex items-center gap-4.5"
           >
-            <button className="flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-95 text-white font-bold py-3.5 px-7 rounded-2xl shadow-xl shadow-blue-500/25 transition-all duration-200 active:scale-95 text-sm tracking-wide">
+            <button className="flex items-center gap-2.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-95 text-white font-bold py-3.5 px-7 rounded-2xl shadow-xl shadow-blue-500/20 dark:shadow-blue-500/25 transition-all duration-200 active:scale-95 text-sm tracking-wide">
               <FiEdit className="w-4 h-4" />
               <span>Start New Transmission</span>
             </button>
-            <button className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 text-white font-bold py-3.5 px-7 rounded-2xl border border-white/5 shadow-lg transition-all duration-200 active:scale-95 text-sm tracking-wide">
+            <button className="flex items-center gap-2.5 bg-slate-200/50 hover:bg-slate-200 text-slate-700 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white font-bold py-3.5 px-7 rounded-2xl border border-slate-300/20 dark:border-white/5 shadow-md dark:shadow-lg transition-all duration-200 active:scale-95 text-sm tracking-wide">
               <FiUsers className="w-4 h-4" />
               <span>Join a Channel</span>
             </button>

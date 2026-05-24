@@ -57,7 +57,7 @@ const Sidebar = () => {
         minWidth: leftNavSidebarCollapsed ? 76 : 220,
       }}
       transition={{ duration: 0.4, ease: [0.25, 0.8, 0.25, 1] }}
-      className="hidden md:flex flex-col h-full bg-[#111827]/40 dark:bg-[#0c1226]/40 border-r border-white/5 z-20 overflow-hidden backdrop-blur-3xl"
+      className="hidden md:flex flex-col h-full bg-slate-50/90 dark:bg-[#0c1226]/40 border-r border-slate-200/60 dark:border-white/5 z-20 overflow-hidden backdrop-blur-3xl"
     >
       {/* ── Branding ── */}
       <div
@@ -77,10 +77,10 @@ const Sidebar = () => {
               exit={{ opacity: 0, x: -10 }}
               className="flex flex-col leading-tight"
             >
-              <span className="text-[17px] font-extrabold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-[17px] font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-650 bg-clip-text text-transparent dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400">
                 Pigeon
               </span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-widest mt-0.5">
                 Terminal
               </span>
             </motion.div>
@@ -148,7 +148,7 @@ const Sidebar = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className={`flex items-center text-gray-400 hover:text-red-400 dark:text-gray-400 dark:hover:text-red-400 rounded-2xl hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group relative ${
+            className={`flex items-center text-slate-500 hover:text-red-500 hover:bg-red-500/10 dark:text-gray-400 dark:hover:text-red-400 dark:hover:bg-red-500/10 border border-transparent rounded-2xl transition-all group relative ${
               leftNavSidebarCollapsed
                 ? "w-11 h-11 justify-center"
                 : "w-full py-3 px-4 gap-3.5"
@@ -178,7 +178,7 @@ const Sidebar = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => dispatch(toggleLeftNavSidebar())}
-            className={`flex items-center text-gray-400 hover:text-blue-400 dark:text-gray-400 dark:hover:text-blue-400 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group relative ${
+            className={`flex items-center text-slate-500 hover:text-blue-600 hover:bg-slate-200/50 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-white/5 border border-transparent rounded-2xl transition-all group relative ${
               leftNavSidebarCollapsed
                 ? "w-11 h-11 justify-center"
                 : "w-full py-3 px-4 gap-3.5"
@@ -214,7 +214,7 @@ const Sidebar = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate("/settings")}
-          className={`flex items-center rounded-2xl cursor-pointer bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all ${
+          className={`flex items-center rounded-2xl cursor-pointer bg-slate-200/50 border border-slate-350/20 dark:bg-white/5 dark:border-white/5 hover:bg-slate-200 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/10 transition-all ${
             leftNavSidebarCollapsed ? "p-2 justify-center" : "p-3 gap-3.5 w-full"
           }`}
         >
@@ -226,20 +226,20 @@ const Sidebar = () => {
               }
               alt="Profile"
               referrerPolicy="no-referrer"
-              className="w-10 h-10 rounded-full object-cover border border-white/10"
+              className="w-10 h-10 rounded-full object-cover border border-slate-300/30 dark:border-white/10"
             />
             {/* Pulsing online green status indicator */}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0f172a]">
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-slate-100 dark:ring-[#0f172a]">
               <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
             </span>
           </div>
           {!leftNavSidebarCollapsed && (
             <div className="min-w-0 flex-1 text-left">
-              <p className="text-[14px] font-bold text-white truncate leading-tight">
+              <p className="text-[14px] font-bold text-slate-800 dark:text-white truncate leading-tight">
                 {user?.username || "User"}
               </p>
-              <p className="text-[11px] font-semibold text-green-400 mt-0.5 tracking-wide flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+              <p className="text-[11px] font-bold text-green-600 dark:text-green-400 mt-0.5 tracking-wide flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 dark:bg-green-400 animate-pulse" />
                 Online
               </p>
             </div>
@@ -258,8 +258,8 @@ const NavItem = ({ icon, label, active, to, collapsed }) => (
       ${collapsed ? "justify-center mx-3 my-0.5 p-3" : "gap-3.5 px-4 py-3 mx-3 my-0.5 text-sm font-bold tracking-wide"}
       ${
         active
-          ? "bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 text-blue-400 border border-white/5 shadow-[0_0_15px_rgba(59,130,246,0.08)]"
-          : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
+          ? "bg-blue-500/10 dark:bg-gradient-to-r dark:from-blue-500/10 dark:via-indigo-500/10 dark:to-purple-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/10 dark:border-white/5 shadow-[0_0_15px_rgba(59,130,246,0.05)] dark:shadow-[0_0_15px_rgba(59,130,246,0.08)]"
+          : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 border border-transparent"
       }
     `}
   >
@@ -267,11 +267,11 @@ const NavItem = ({ icon, label, active, to, collapsed }) => (
     {active && (
       <motion.span
         layoutId="sidebar-active-indicator"
-        className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-r-full bg-gradient-to-b from-blue-400 to-indigo-400"
+        className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-r-full bg-gradient-to-b from-blue-500 to-indigo-500"
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
       />
     )}
-    <span className={`shrink-0 transition-transform duration-300 group-hover:scale-115 ${active ? "text-blue-400" : "text-gray-400 group-hover:text-white"}`}>
+    <span className={`shrink-0 transition-transform duration-300 group-hover:scale-115 ${active ? "text-blue-600 dark:text-blue-400" : "text-slate-500 group-hover:text-slate-900 dark:text-gray-400 dark:group-hover:text-white"}`}>
       {icon}
     </span>
     {!collapsed && <span>{label}</span>}
