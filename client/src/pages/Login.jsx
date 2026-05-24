@@ -57,15 +57,12 @@ const Login = () => {
       transition={{ duration: 0.45 }}
       className="w-full flex flex-col text-left"
     >
-      <div className="mb-6">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">
-          Welcome back
-        </span>
+      <div className="mb-7">
         <h1
-          className="text-3xl font-bold text-slate-900 mt-2"
+          className="text-[34px] leading-tight font-extrabold text-slate-900"
           style={{ fontFamily: '"Space Grotesk", sans-serif' }}
         >
-          Sign in to Pigeon
+          Welcome Back!
         </h1>
         <p className="text-slate-500 text-sm leading-relaxed mt-2">
           Continue your journey toward smarter, faster conversations.
@@ -74,7 +71,7 @@ const Login = () => {
 
       <form onSubmit={handleLogin} className="space-y-3">
         <div>
-          <label className="text-xs font-semibold text-slate-500 mb-2 block">
+          <label className="text-[13px] font-semibold text-slate-600 mb-2 block">
             Email Address
           </label>
           <div className="relative">
@@ -84,7 +81,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="you@pigeon.chat"
-              className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
+              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#EEF2FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -93,7 +90,7 @@ const Login = () => {
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-slate-500 mb-2 block">
+          <label className="text-[13px] font-semibold text-slate-600 mb-2 block">
             Password
           </label>
           <div className="relative">
@@ -103,7 +100,7 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className="w-full pl-11 pr-11 py-3 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
+              className="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-[#EEF2FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -119,7 +116,7 @@ const Login = () => {
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+          <label className="flex items-center gap-2 text-[13px] text-slate-600 font-medium">
             <input
               type="checkbox"
               className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
@@ -130,7 +127,7 @@ const Login = () => {
           </label>
           <Link
             to="/forgot-password"
-            className="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+            className="text-[13px] font-semibold text-indigo-600 hover:text-indigo-500"
           >
             Forgot Password?
           </Link>
@@ -141,13 +138,13 @@ const Login = () => {
           whileTap={{ scale: 0.99 }}
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-2xl font-semibold shadow-lg shadow-indigo-500/20 transition"
+          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-semibold shadow-lg shadow-indigo-500/30 transition"
         >
-          {loading ? "Logging in..." : "Log In"}
+          {loading ? "Logging in..." : "Log In ->"}
         </motion.button>
       </form>
 
-      <div className="relative my-5 flex items-center justify-center">
+      <div className="relative my-6 flex items-center justify-center">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200"></div>
         </div>
@@ -157,13 +154,13 @@ const Login = () => {
       </div>
 
       {/* Social Options */}
-      <div className="grid grid-cols-2 gap-3 mb-8 w-full max-w-sm">
+      <div className="grid grid-cols-2 gap-3 mb-7 w-full max-w-sm">
         {/* Custom Google Button Container with Hidden GoogleLogin */}
         <div className="relative h-11 w-full">
           {/* Custom Google Button */}
-          <button 
+          <button
             type="button"
-            className="absolute inset-0 flex items-center justify-center gap-2.5 w-full h-full bg-white border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-200 text-[13px] font-medium shadow-sm pointer-events-none transition-all duration-200"
+            className="absolute inset-0 flex items-center justify-center gap-2.5 w-full h-full bg-white border border-slate-200 rounded-xl text-slate-700 text-[13px] font-medium shadow-sm pointer-events-none transition-all duration-200"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path
@@ -185,13 +182,13 @@ const Login = () => {
             </svg>
             Sign in with Google
           </button>
-          
+
           {/* Overlay Hidden GoogleLogin Iframe */}
           <div className="absolute inset-0 opacity-[0.01] overflow-hidden cursor-pointer w-full h-full flex justify-center items-center">
-            <GoogleLogin 
-              onSuccess={handleGoogleSuccess} 
-              onError={() => toast.error('Google Login Failed')} 
-              theme="outline" 
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error("Google Login Failed")}
+              theme="outline"
               size="large"
               width="360px"
             />
@@ -199,17 +196,20 @@ const Login = () => {
         </div>
 
         {/* Custom Apple Button */}
-        <motion.button 
+        <motion.button
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
           type="button"
-          onClick={() => toast.success('Apple ID authentication initiated')}
-          className="flex items-center justify-center gap-2.5 h-11 w-full border border-transparent rounded-xl bg-[#F0F4FA] hover:bg-[#E2E8F0] dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 text-[13px] font-medium shadow-sm transition-all duration-200"
+          onClick={() => toast.success("Apple ID authentication initiated")}
+          className="flex items-center justify-center gap-2.5 h-11 w-full border border-transparent rounded-xl bg-[#F0F4FA] hover:bg-[#E2E8F0] text-slate-800 text-[13px] font-medium shadow-sm transition-all duration-200"
         >
-          <svg className="w-4 h-4 text-slate-800 dark:text-white fill-current shrink-0" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 text-slate-800 dark:text-white fill-current shrink-0"
+            viewBox="0 0 24 24"
+          >
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.5-.62.71-1.16 1.85-1.02 2.96 1.11.09 2.26-.56 2.97-1.4" />
           </svg>
-          iOS Apple
+          Continue with Apple
         </motion.button>
       </div>
 
