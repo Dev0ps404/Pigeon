@@ -11,7 +11,7 @@ const AuthLayout = () => {
     >
       <div className="min-h-screen grid lg:grid-cols-[1fr_1.25fr]">
         {/* Left Panel */}
-        <div className="relative z-10 flex flex-col justify-between px-6 py-8 lg:px-12 lg:py-10 bg-white/95 backdrop-blur-sm border-r border-slate-100">
+        <div className="relative z-10 flex flex-col justify-between px-6 py-6 lg:px-12 lg:py-8 bg-white/95 backdrop-blur-sm border-r border-slate-100">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 group">
               <PigeonLogo
@@ -35,11 +35,11 @@ const AuthLayout = () => {
             </a>
           </div>
 
-          <div className="my-auto py-6 max-w-md w-full mx-auto">
+          <div className="my-auto py-4 max-w-sm w-full mx-auto">
             <Outlet />
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-[11px] font-semibold text-slate-400 pt-6 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-[11px] font-semibold text-slate-400 pt-5 border-t border-slate-100">
             <span>&copy; {new Date().getFullYear()} Pigeon Labs</span>
             <div className="flex gap-4">
               <a href="#" className="hover:text-slate-600 transition-colors">
@@ -79,18 +79,18 @@ const AuthLayout = () => {
             initial={{ opacity: 0, scale: 0.96, y: 18 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="relative z-10 w-[78%] max-w-lg rounded-[32px] bg-white/15 border border-white/20 backdrop-blur-2xl p-8 shadow-2xl"
+            className="relative z-10 w-[78%] max-w-lg rounded-[32px] bg-white/15 border border-white/20 backdrop-blur-2xl p-7 shadow-2xl"
           >
-            <div className="w-12 h-1.5 bg-gradient-to-r from-emerald-300 to-cyan-300 rounded-full mb-6" />
+            <div className="w-12 h-1.5 bg-gradient-to-r from-emerald-300 to-cyan-300 rounded-full mb-5" />
             <h2
-              className="text-3xl font-bold text-white leading-snug tracking-tight mb-6"
+              className="text-2xl md:text-3xl font-bold text-white leading-snug tracking-tight mb-4"
               style={{ fontFamily: '"Space Grotesk", sans-serif' }}
             >
-              Empowering your financial journey.
+              Powering real-time conversations.
             </h2>
-            <p className="text-sm text-white/70 leading-relaxed mb-6">
-              Build momentum with insights, automation, and real-time account
-              health.
+            <p className="text-sm text-white/70 leading-relaxed mb-5">
+              Stay connected with low-latency messaging, presence, and smart
+              delivery.
             </p>
             <div className="flex items-center gap-3 pt-5 border-t border-white/20">
               <div className="flex items-center -space-x-3">
@@ -105,7 +105,7 @@ const AuthLayout = () => {
                 </div>
               </div>
               <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">
-                Join 12,000+ users today
+                Join 12,000+ users daily
               </span>
             </div>
           </motion.div>
@@ -121,12 +121,12 @@ const AuthLayout = () => {
             </div>
             <div className="flex flex-col text-left">
               <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">
-                Savings Goal
+                Delivery Rate
               </span>
               <span className="text-[14px] font-extrabold text-white">
-                $1,240.00{" "}
+                99.98%
                 <span className="text-emerald-300 text-xs font-bold ml-2">
-                  +8%
+                  +0.02%
                 </span>
               </span>
             </div>

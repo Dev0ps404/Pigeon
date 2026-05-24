@@ -57,12 +57,12 @@ const Login = () => {
       transition={{ duration: 0.45 }}
       className="w-full flex flex-col text-left"
     >
-      <div className="mb-8">
+      <div className="mb-6">
         <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">
           Welcome back
         </span>
         <h1
-          className="text-4xl font-bold text-slate-900 mt-2"
+          className="text-3xl font-bold text-slate-900 mt-2"
           style={{ fontFamily: '"Space Grotesk", sans-serif' }}
         >
           Sign in to Pigeon
@@ -72,7 +72,7 @@ const Login = () => {
         </p>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-3">
         <div>
           <label className="text-xs font-semibold text-slate-500 mb-2 block">
             Email Address
@@ -84,7 +84,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="you@pigeon.chat"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
+              className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -103,7 +103,7 @@ const Login = () => {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              className="w-full pl-11 pr-11 py-3.5 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
+              className="w-full pl-11 pr-11 py-3 rounded-2xl bg-[#F2F5FF] border border-[#E3E9FF] focus:border-indigo-400/60 focus:outline-none focus:ring-4 focus:ring-indigo-200/60 text-sm text-slate-800 placeholder-slate-400 transition"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -141,13 +141,13 @@ const Login = () => {
           whileTap={{ scale: 0.99 }}
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 rounded-2xl font-semibold shadow-lg shadow-indigo-500/20 transition"
+          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-2xl font-semibold shadow-lg shadow-indigo-500/20 transition"
         >
           {loading ? "Logging in..." : "Log In"}
         </motion.button>
       </form>
 
-      <div className="relative my-6 flex items-center justify-center">
+      <div className="relative my-5 flex items-center justify-center">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-slate-200"></div>
         </div>
@@ -156,8 +156,8 @@ const Login = () => {
         </span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 mb-6">
-        <div className="flex justify-center rounded-2xl border border-slate-200 bg-white shadow-sm py-2">
+      <div className="grid gap-2 sm:grid-cols-2 mb-4">
+        <div className="flex justify-center rounded-2xl border border-slate-200 bg-white shadow-sm py-1.5">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => toast.error("Google Login Failed")}
@@ -171,7 +171,7 @@ const Login = () => {
           whileTap={{ scale: 0.99 }}
           type="button"
           onClick={() => toast.success("Apple ID authentication initiated")}
-          className="w-full flex items-center justify-center gap-2.5 py-3 px-4 border border-slate-200 rounded-2xl bg-[#F2F5FF] hover:bg-[#E9EDFF] transition text-slate-700 font-semibold shadow-sm"
+          className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 border border-slate-200 rounded-2xl bg-[#F2F5FF] hover:bg-[#E9EDFF] transition text-slate-700 font-semibold shadow-sm"
         >
           <svg
             className="w-4 h-4 text-slate-700 fill-current shrink-0"
@@ -185,7 +185,7 @@ const Login = () => {
         </motion.button>
       </div>
 
-      <p className="text-center text-sm text-slate-500 font-medium">
+      <p className="text-center text-xs text-slate-500 font-medium">
         Don't have an account?
         <Link
           to="/register"
