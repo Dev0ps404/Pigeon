@@ -23,45 +23,45 @@ const AuthLayout = () => {
         <div className="grid lg:grid-cols-[1fr_1.25fr]">
           {/* Left Panel */}
           <div className="relative z-10 flex flex-col justify-between px-6 py-6 lg:px-12 lg:py-8 bg-white/95 backdrop-blur-sm border-r border-slate-200/70">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3 group">
-              <PigeonLogo
-                className="w-10 h-10 rounded-2xl shadow-lg shadow-indigo-500/15"
-                variant="gradient"
-              />
-              <div className="flex flex-col leading-tight">
-                <span className="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
-                  Pigeon
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">
-                  Secure Chat
-                </span>
-              </div>
-            </Link>
-            <a
-              href="mailto:support@pigeon.chat"
-              className="text-[11px] font-semibold tracking-widest text-slate-400 hover:text-indigo-600 uppercase transition-colors"
-            >
-              Need Help?
-            </a>
-          </div>
-
-          <div className="my-auto py-4 max-w-sm w-full mx-auto">
-            <Outlet />
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-[11px] font-semibold text-slate-400 pt-5 border-t border-slate-200/70">
-            <span>&copy; {new Date().getFullYear()} Pigeon Labs</span>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-slate-600 transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-slate-600 transition-colors">
-                Terms
+            <div className="flex items-center justify-between">
+              <Link to="/" className="flex items-center gap-3 group">
+                <PigeonLogo
+                  className="w-10 h-10 rounded-2xl shadow-lg shadow-indigo-500/15"
+                  variant="gradient"
+                />
+                <div className="flex flex-col leading-tight">
+                  <span className="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    Pigeon
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">
+                    Secure Chat
+                  </span>
+                </div>
+              </Link>
+              <a
+                href="mailto:support@pigeon.chat"
+                className="text-[11px] font-semibold tracking-widest text-slate-400 hover:text-indigo-600 uppercase transition-colors"
+              >
+                Need Help?
               </a>
             </div>
+
+            <div className="my-auto py-4 max-w-sm w-full mx-auto">
+              <Outlet />
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-[11px] font-semibold text-slate-400 pt-5 border-t border-slate-200/70">
+              <span>&copy; {new Date().getFullYear()} Pigeon Labs</span>
+              <div className="flex gap-4">
+                <a href="#" className="hover:text-slate-600 transition-colors">
+                  Privacy Policy
+                </a>
+                <a href="#" className="hover:text-slate-600 transition-colors">
+                  Terms
+                </a>
+              </div>
+            </div>
           </div>
-        </div>
 
           {/* Right Panel */}
           <div className="hidden lg:flex relative items-center justify-center overflow-hidden">
