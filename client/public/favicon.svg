@@ -1,17 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="none">
-  <!-- Gradient Background Circle -->
-  <circle cx="12" cy="12" r="10" fill="url(#pigeonGrad)" />
-  
-  <!-- Sleek Modern Pigeon silhouette -->
-  <path d="M15.5 10c.2 0 .4-.1.4-.4V8.5c0-.4-.2-.8-.6-1L13.5 6.7C12.3 6.1 11.1 6 10 6c-3.3 0-6 2.7-6 6s2.7 6 6 6c1.7 0 3.2-.7 4.3-1.7l.4-.4c.1-.1.1-.4 0-.5l-1.5-1.5c-.1-.1-.4-.1-.5 0l-.2.2c-.6.6-1.5 1-2.5 1-1.9 0-3.5-1.6-3.5-3.5S7.6 9 9.5 9h6z" fill="white" />
-  
-  <!-- Tiny blue eye -->
-  <circle cx="9" cy="8" r="0.6" fill="#1e40af" />
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="32" height="32" fill="none">
   <defs>
-    <linearGradient id="pigeonGrad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#2563eb" />
-      <stop offset="100%" stop-color="#1d4ed8" />
+    <!-- Main Logo Gradient -->
+    <linearGradient id="pigeonBrandGrad" x1="22" y1="20" x2="76" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#06b6d4" />      {/* Electric Cyan */}
+      <stop offset="50%" stop-color="#2563eb" />     {/* Royal Blue */}
+      <stop offset="100%" stop-color="#a855f7" />    {/* Purple Accent */}
+    </linearGradient>
+
+    <!-- Bird Eye Anchor -->
+    <linearGradient id="pigeonEyeGlow" x1="41" y1="33" x2="47" y2="39" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
   </defs>
+
+  <!-- Left Stem of the "P" -->
+  <rect x="22" y="20" width="9" height="60" rx="4.5" fill="url(#pigeonBrandGrad)" />
+
+  <!-- Top Chat Loop / Pigeon Head & Beak -->
+  <path d="M 31 20 C 52 20, 68 32, 68 47 C 68 54, 61 60, 52 64 L 58 74 L 46 67 C 41 68, 36 68, 31 68 C 27 68, 27 60, 31 60 C 35 60, 40 59, 44 57 C 52 54, 58 48, 58 41 C 58 32, 46 29, 31 29 C 27 29, 27 20, 31 20 Z" fill="url(#pigeonBrandGrad)" />
+
+  <!-- Futuristic Wing / Abstract Messenger swoosh -->
+  <path d="M 31 43 C 46 43, 76 46, 76 60 C 76 74, 52 80, 38 80 C 34 80, 34 71, 38 71 C 48 71, 65 67, 65 60 C 65 54, 46 52, 31 52 C 27 52, 27 43, 31 43 Z" fill="url(#pigeonBrandGrad)" />
+
+  <!-- Glowing eye -->
+  <circle cx="44" cy="36" r="3" fill="url(#pigeonEyeGlow)" />
 </svg>
