@@ -33,13 +33,16 @@ const ForgotPassword = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="bg-white rounded-[2rem] p-8 w-full shadow-[0_20px_50px_rgba(0,102,204,0.08)] border border-gray-100/90 relative overflow-hidden"
+      className="bg-[#111827]/40 backdrop-blur-2xl rounded-[2.5rem] p-8 w-full shadow-[0_30px_60px_rgba(0,0,0,0.5)] border border-white/5 relative overflow-hidden transition-all duration-300 hover:border-white/10"
     >
+      {/* Decorative top ambient glow line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500 to-transparent opacity-60" />
+
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-[#0052a3] tracking-tight mb-2">
+        <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-400 via-indigo-200 to-blue-300 bg-clip-text text-transparent tracking-tight mb-2">
           Reset Password
         </h1>
-        <p className="text-gray-500 text-sm">
+        <p className="text-slate-400 text-sm">
           {!submitted ? 'Enter your registered email to retrieve recovery link' : 'Instructions sent'}
         </p>
       </div>
@@ -48,17 +51,17 @@ const ForgotPassword = () => {
         <form onSubmit={handleForgotPassword} className="space-y-5">
           {/* Email Field */}
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1.5 block text-left pl-1">
+            <label className="text-[10px] font-extrabold text-slate-400 mb-1.5 block text-left pl-1 uppercase tracking-widest">
               Email Address
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                 <FiMail size={18} />
               </div>
               <input 
                 type="email" 
                 placeholder="pigeon@flight.com"
-                className="w-full pl-11 pr-4 py-3 bg-[#f8fafc] border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0066cc]/10 focus:border-[#0066cc]/40 focus:bg-white text-sm text-gray-800 placeholder-gray-400 transition-all"
+                className="w-full pl-11 pr-4 py-3.5 bg-white/[0.02] border border-white/5 focus:border-cyan-500/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-cyan-500/10 focus:bg-white/[0.04] text-sm text-slate-200 placeholder-slate-600 transition-all font-medium"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
@@ -66,13 +69,15 @@ const ForgotPassword = () => {
             </div>
           </div>
 
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
             type="submit" 
             disabled={loading} 
-            className="w-full bg-[#005cbb] hover:bg-[#0052a3] text-white py-3.5 rounded-xl font-semibold shadow-md shadow-[#0066cc]/10 active:scale-[0.98] transition-all flex justify-center items-center text-sm"
+            className="w-full bg-gradient-to-r from-cyan-600 via-indigo-650 to-blue-600 hover:from-cyan-500 hover:via-indigo-550 hover:to-blue-500 text-white py-3.5 rounded-2xl font-extrabold shadow-lg shadow-cyan-500/10 hover:shadow-xl active:scale-[0.98] transition-all flex justify-center items-center text-xs uppercase tracking-widest font-black"
           >
             {loading ? 'Sending instruction...' : 'Send Recovery Instructions'}
-          </button>
+          </motion.button>
         </form>
       ) : (
         <motion.div 
@@ -80,14 +85,14 @@ const ForgotPassword = () => {
           animate={{ scale: 1 }}
           className="text-center py-6 space-y-4"
         >
-          <div className="mx-auto w-16 h-16 bg-[#e3f2fd] text-[#0066cc] rounded-full flex items-center justify-center shadow-md">
+          <div className="mx-auto w-16 h-16 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full flex items-center justify-center shadow-md">
             <FiCheckCircle size={32} />
           </div>
-          <p className="text-sm text-gray-600 font-medium px-2">
+          <p className="text-sm text-slate-350 font-medium px-2">
             {message}
           </p>
           <div className="pt-2">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-slate-500">
               Please check your spam or promotions folder if you don't receive it in 2 minutes.
             </p>
           </div>
@@ -97,7 +102,7 @@ const ForgotPassword = () => {
       <div className="mt-8 text-center">
         <Link 
           to="/login" 
-          className="inline-flex items-center gap-2 text-xs font-bold text-[#0066cc] hover:underline"
+          className="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300 hover:underline"
         >
           <FiArrowLeft size={16} />
           Back to login screen

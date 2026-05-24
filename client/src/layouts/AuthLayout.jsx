@@ -1,49 +1,85 @@
 import { Outlet } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import PigeonLogo from '../components/Logo';
 
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#eef5fc] dark:bg-[#0B1020] transition-colors duration-500">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#0B1020] text-white transition-colors duration-500">
       
-      {/* Abstract Startup Arrow & Line Background Layer */}
-      <svg className="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" fill="none">
-        {/* Soft glowing ambient circle orbs */}
-        <circle cx="200" cy="200" r="300" fill="#bbdefb" fillOpacity="0.25" filter="blur(80px)" />
-        <circle cx="1200" cy="600" r="400" fill="#90caf9" fillOpacity="0.2" filter="blur(100px)" />
+      {/* Dynamic Drifting Background Gradient Blobs (Ambient Lights) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Blob 1 */}
+        <motion.div
+          animate={{
+            x: [0, 40, -20, 0],
+            y: [0, -60, 40, 0],
+            scale: [1, 1.15, 0.9, 1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] max-w-[500px] max-h-[500px] rounded-full bg-indigo-600/15 blur-[80px] md:blur-[120px]"
+        />
 
-        {/* Diagonal clean vector lines */}
-        <path d="M-100 800L1100 -400" stroke="#0066cc" strokeWidth="8" strokeOpacity="0.05" strokeLinecap="round" />
-        <path d="M0 900L1200 -300" stroke="#0066cc" strokeWidth="48" strokeOpacity="0.03" strokeLinecap="round" />
-        <path d="M200 1100L1500 -200" stroke="#0066cc" strokeWidth="12" strokeOpacity="0.04" strokeLinecap="round" />
-        <path d="M400 1200L1700 -100" stroke="#0066cc" strokeWidth="96" strokeOpacity="0.02" strokeLinecap="round" />
+        {/* Blob 2 */}
+        <motion.div
+          animate={{
+            x: [0, -50, 30, 0],
+            y: [0, 40, -60, 0],
+            scale: [1, 0.9, 1.1, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute -bottom-[10%] -right-[10%] w-[55vw] h-[55vw] max-w-[600px] max-h-[600px] rounded-full bg-purple-600/15 blur-[100px] md:blur-[140px]"
+        />
 
-        {/* Large abstract arrow visuals mapping the screenshot */}
-        <g stroke="#0066cc" strokeLinecap="round" strokeLinejoin="round">
-          {/* Main central arrow */}
-          <path d="M950 480 L1150 280" strokeWidth="24" strokeOpacity="0.12" />
-          <path d="M1030 280 L1150 280 L1150 400" strokeWidth="24" strokeOpacity="0.12" />
+        {/* Blob 3 */}
+        <motion.div
+          animate={{
+            x: [0, 30, -30, 0],
+            y: [0, 50, 30, 0],
+            scale: [1, 1.05, 0.95, 1],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-[40%] left-[20%] w-[35vw] h-[35vw] max-w-[400px] max-h-[400px] rounded-full bg-cyan-500/10 blur-[80px] md:blur-[100px]"
+        />
+      </div>
 
-          {/* Sub-arrows */}
-          <path d="M1020 600 L1120 500" strokeWidth="10" strokeOpacity="0.07" />
-          <path d="M1070 500 L1120 500 L1120 550" strokeWidth="10" strokeOpacity="0.07" />
-
-          <path d="M780 320 L880 220" strokeWidth="8" strokeOpacity="0.05" />
-          <path d="M830 220 L880 220 L880 270" strokeWidth="8" strokeOpacity="0.05" />
-        </g>
-      </svg>
-      
-      {/* Outer blurred container overlay backplate for glowing depth */}
-      <div className="absolute w-[440px] h-[550px] bg-white/20 dark:bg-dark-card/10 backdrop-blur-md rounded-[40px] shadow-[0_20px_60px_rgba(0,102,204,0.06)] pointer-events-none z-1" />
+      {/* Decorative Grid Lines to add high-tech/futuristic look */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+        }}
+      />
 
       <div className="relative z-10 w-full max-w-md flex flex-col items-center">
         
-        {/* Cute Floating Bird Logo Box */}
-        <div className="w-16 h-16 bg-white border border-white/50 rounded-2xl flex items-center justify-center shadow-[0_12px_32px_rgba(0,102,204,0.08)] mb-6 transition-transform duration-300 hover:scale-105">
-          <div className="w-11 h-11 bg-[#e3f2fd] rounded-xl flex items-center justify-center">
-            {/* Highly visual cute pigeon silhouette facing right */}
-            <PigeonLogo className="w-7 h-7" variant="silhouette" color="#0066cc" />
+        {/* Floating Futuristic Bird Logo Box */}
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+          className="w-20 h-20 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-[1.5rem] flex items-center justify-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] mb-8 transition-all duration-300 hover:border-blue-500/30 hover:shadow-[0_20px_50px_rgba(37,99,235,0.15)] group cursor-pointer"
+        >
+          <div className="w-14 h-14 bg-gradient-to-tr from-blue-600/20 to-purple-600/20 rounded-[1.1rem] flex items-center justify-center border border-white/5 relative overflow-hidden group-hover:scale-105 transition-transform duration-300">
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <PigeonLogo className="w-9 h-9 relative z-10" variant="silhouette" color="#60a5fa" />
           </div>
-        </div>
+        </motion.div>
 
         <Outlet />
       </div>
