@@ -497,28 +497,28 @@ const ChatWindow = ({ isTyping }) => {
 
   return (
     <div
-      className="flex-1 flex flex-col bg-[#0b1020]/30 relative h-full backdrop-blur-3xl overflow-hidden"
+      className="flex-1 flex flex-col bg-white/70 dark:bg-[#0c1326]/60 relative h-full backdrop-blur-3xl overflow-hidden"
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       {/* Background grids */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff01_1px,transparent_1px),linear-gradient(to_bottom,#ffffff01_1px,transparent_1px)] bg-[size:40px_40px] z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.18)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.18)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] z-0 pointer-events-none" />
 
       {isDragging && (
-        <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-[2px] border border-dashed border-blue-500/30 rounded-3xl m-4 flex flex-col items-center justify-center z-50 pointer-events-none m-6">
+        <div className="absolute inset-0 bg-sky-500/10 backdrop-blur-[2px] border border-dashed border-sky-500/30 rounded-3xl m-4 flex flex-col items-center justify-center z-50 pointer-events-none m-6">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-[#111827]/80 backdrop-blur-md p-7 rounded-3xl shadow-2xl border border-white/5 flex flex-col items-center gap-3.5"
+            className="bg-white/90 dark:bg-[#111827]/80 backdrop-blur-md p-7 rounded-3xl shadow-2xl border border-slate-200/60 dark:border-white/5 flex flex-col items-center gap-3.5"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center shadow-inner">
+            <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-600 dark:text-blue-400 flex items-center justify-center shadow-inner">
               <FiPaperclip size={22} className="animate-bounce" />
             </div>
-            <p className="font-bold text-white">
+            <p className="font-bold text-slate-900 dark:text-white">
               Drop your file here to attach
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500 dark:text-gray-500">
               Supports images, videos, audio, and documents
             </p>
           </motion.div>
@@ -526,12 +526,12 @@ const ChatWindow = ({ isTyping }) => {
       )}
 
       {/* Floating Glass Header */}
-      <div className="h-20 border-b border-white/5 px-4 md:px-8 flex items-center justify-between bg-[#111827]/40 dark:bg-[#0c1226]/40 backdrop-blur-md sticky top-0 z-20 shadow-sm select-none">
+      <div className="h-20 border-b border-slate-200/60 dark:border-white/5 px-4 md:px-8 flex items-center justify-between bg-white/80 dark:bg-[#0f172a]/70 backdrop-blur-md sticky top-0 z-20 shadow-sm select-none">
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
           {/* Back button for mobile */}
           <button
             onClick={() => dispatch(setActiveChat(null))}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all mr-1 shrink-0"
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 border border-transparent hover:border-slate-200/70 dark:hover:border-white/5 transition-all mr-1 shrink-0"
             title="Back to Chats"
           >
             <FiArrowLeft size={20} />
@@ -548,23 +548,23 @@ const ChatWindow = ({ isTyping }) => {
                   referrerPolicy="no-referrer"
                   src={chatPic}
                   alt="avatar"
-                  className="w-11 h-11 md:w-12 md:h-12 rounded-full object-cover shadow-md border border-white/10"
+                  className="w-11 h-11 md:w-12 md:h-12 rounded-full object-cover shadow-md border border-slate-200/70 dark:border-white/10"
                 />
               ) : (
-                <div className="w-11 h-11 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md border border-white/10">
+                <div className="w-11 h-11 md:w-12 md:h-12 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md border border-slate-200/70 dark:border-white/10">
                   {chatName?.[0]?.toUpperCase()}
                 </div>
               )}
               {/* Pulsing online indicator */}
-              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#111827] rounded-full">
+              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#111827] rounded-full">
                 <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
               </div>
             </div>
             <div className="flex flex-col min-w-0 text-left">
-              <h3 className="font-bold text-base md:text-lg text-white leading-tight truncate">
+              <h3 className="font-bold text-base md:text-lg text-slate-900 dark:text-white leading-tight truncate">
                 {chatName}
               </h3>
-              <span className="text-xs md:text-sm font-bold text-blue-400 h-4 md:h-5 mt-0.5 truncate tracking-wide">
+              <span className="text-xs md:text-sm font-bold text-emerald-600 dark:text-emerald-400 h-4 md:h-5 mt-0.5 truncate tracking-wide">
                 {isTyping ? "typing..." : "Online"}
               </span>
             </div>
@@ -574,28 +574,28 @@ const ChatWindow = ({ isTyping }) => {
         <div className="flex items-center gap-1 md:gap-2 shrink-0">
           <button
             onClick={() => startCall("audio")}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-blue-400 hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-sky-600 hover:bg-slate-100/70 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-white/5 border border-transparent hover:border-slate-200/70 dark:hover:border-white/5 transition-all"
             title="Start Audio Call"
           >
             <FiPhone size={19} />
           </button>
           <button
             onClick={() => startCall("video")}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-indigo-400 hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-indigo-600 hover:bg-slate-100/70 dark:text-gray-400 dark:hover:text-indigo-400 dark:hover:bg-white/5 border border-transparent hover:border-slate-200/70 dark:hover:border-white/5 transition-all"
             title="Start Video Call"
           >
             <FiVideo size={19} />
           </button>
           <button
             onClick={() => dispatch(toggleProfileSidebar())}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-purple-400 hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-cyan-600 hover:bg-slate-100/70 dark:text-gray-400 dark:hover:text-purple-400 dark:hover:bg-white/5 border border-transparent hover:border-slate-200/70 dark:hover:border-white/5 transition-all"
             title="Toggle Profile Info"
           >
             <FiInfo size={19} />
           </button>
-          <div className="w-px h-6 bg-white/5 mx-1 md:mx-2"></div>
+          <div className="w-px h-6 bg-slate-200/70 dark:bg-white/5 mx-1 md:mx-2"></div>
           <button
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 border border-transparent hover:border-slate-200/70 dark:hover:border-white/5 transition-all"
             title="More Options"
           >
             <FiMoreVertical size={19} />
@@ -616,23 +616,23 @@ const ChatWindow = ({ isTyping }) => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 text-gray-400 ml-12 mb-4"
+            className="flex items-center gap-2 text-slate-500 dark:text-gray-400 ml-12 mb-4"
           >
-            <div className="flex gap-1.5 bg-white/5 py-3 px-4 rounded-2xl rounded-tl-sm border border-white/5 shadow-sm backdrop-blur-md">
+            <div className="flex gap-1.5 bg-white/80 dark:bg-white/5 py-3 px-4 rounded-2xl rounded-tl-sm border border-slate-200/70 dark:border-white/5 shadow-sm backdrop-blur-md">
               <motion.div
                 animate={{ y: [0, -5, 0] }}
                 transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
-                className="w-1.5 h-1.5 bg-blue-400 rounded-full"
+                className="w-1.5 h-1.5 bg-sky-500 rounded-full"
               />
               <motion.div
                 animate={{ y: [0, -5, 0] }}
                 transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
-                className="w-1.5 h-1.5 bg-blue-400 rounded-full"
+                className="w-1.5 h-1.5 bg-sky-500 rounded-full"
               />
               <motion.div
                 animate={{ y: [0, -5, 0] }}
                 transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
-                className="w-1.5 h-1.5 bg-blue-400 rounded-full"
+                className="w-1.5 h-1.5 bg-sky-500 rounded-full"
               />
             </div>
           </motion.div>
@@ -648,7 +648,7 @@ const ChatWindow = ({ isTyping }) => {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.7, opacity: 0 }}
             onClick={scrollToBottom}
-            className="absolute bottom-28 right-8 w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 z-30 active:scale-95 transition-all border border-white/10"
+            className="absolute bottom-28 right-8 w-10 h-10 rounded-full bg-gradient-to-br from-sky-500 to-emerald-500 text-white flex items-center justify-center shadow-lg shadow-sky-500/20 z-30 active:scale-95 transition-all border border-white/20"
             title="Scroll to bottom"
           >
             <FiChevronDown size={18} />
@@ -658,7 +658,7 @@ const ChatWindow = ({ isTyping }) => {
 
       {/* Floating Glassmorphic Input capsule */}
       <div className="p-4 md:p-6 bg-transparent relative z-10 max-w-5xl w-full mx-auto pb-6">
-        <div className="bg-[#111827]/40 border border-white/5 backdrop-blur-xl rounded-[2.2rem] p-3 shadow-2xl transition-all focus-within:ring-2 focus-within:ring-indigo-500/20 relative">
+        <div className="bg-white/90 dark:bg-[#111827]/40 border border-slate-200/70 dark:border-white/5 backdrop-blur-xl rounded-[2.2rem] p-3 shadow-2xl transition-all focus-within:ring-2 focus-within:ring-sky-400/30 relative">
           <input
             type="file"
             ref={fileInputRef}
@@ -669,19 +669,21 @@ const ChatWindow = ({ isTyping }) => {
           {emojiPickerOpen && (
             <div
               ref={emojiPickerRef}
-              className="absolute bottom-24 left-4 z-50 shadow-2xl rounded-3xl overflow-hidden border border-white/5"
+              className="absolute bottom-24 left-4 z-50 shadow-2xl rounded-3xl overflow-hidden border border-slate-200/80 dark:border-white/5"
             >
               <EmojiPicker
                 onEmojiClick={(emojiData) => {
                   setNewMessage((prev) => prev + emojiData.emoji);
                 }}
-                theme="dark"
+                theme={
+                  theme === "dark" || theme === "cyberpunk" ? "dark" : "light"
+                }
               />
             </div>
           )}
 
           {selectedFile && (
-            <div className="mb-3 bg-[#0a0f1c]/80 backdrop-blur-md border border-white/5 rounded-2xl p-4 flex flex-col shadow-lg relative animate-fade-in text-left">
+            <div className="mb-3 bg-slate-50/90 dark:bg-[#0a0f1c]/80 backdrop-blur-md border border-slate-200/70 dark:border-white/5 rounded-2xl p-4 flex flex-col shadow-lg relative animate-fade-in text-left">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   {selectedFile.previewUrl ? (
@@ -690,24 +692,24 @@ const ChatWindow = ({ isTyping }) => {
                         referrerPolicy="no-referrer"
                         src={selectedFile.previewUrl}
                         alt="Preview"
-                        className="w-14 h-14 object-cover rounded-xl border border-white/10 shrink-0"
+                        className="w-14 h-14 object-cover rounded-xl border border-slate-200/70 dark:border-white/10 shrink-0"
                       />
                     ) : (
                       <video
                         src={selectedFile.previewUrl}
-                        className="w-14 h-14 object-cover rounded-xl border border-white/10 shrink-0 bg-black"
+                        className="w-14 h-14 object-cover rounded-xl border border-slate-200/70 dark:border-white/10 shrink-0 bg-black"
                       />
                     )
                   ) : (
-                    <div className="w-14 h-14 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 bg-sky-500/10 text-sky-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
                       <FiFile size={24} />
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-white truncate pr-2">
+                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate pr-2">
                       {selectedFile.name}
                     </p>
-                    <p className="text-[10px] font-bold text-gray-500 uppercase mt-0.5">
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase mt-0.5">
                       {(selectedFile.size / 1024).toFixed(1)} KB •{" "}
                       {selectedFile.type}
                     </p>
@@ -717,7 +719,7 @@ const ChatWindow = ({ isTyping }) => {
                 <button
                   onClick={clearSelectedFile}
                   disabled={uploading}
-                  className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 text-gray-400 hover:text-white transition-colors disabled:opacity-50 shrink-0"
+                  className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/70 dark:border-white/5 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-50 shrink-0"
                 >
                   <FiX size={16} />
                 </button>
@@ -725,13 +727,13 @@ const ChatWindow = ({ isTyping }) => {
 
               {uploading && (
                 <div className="mt-3">
-                  <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-1">
+                  <div className="flex justify-between text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase mb-1">
                     <span>Uploading transmission...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200/70 dark:bg-white/5 h-1.5 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 h-full transition-all duration-200"
+                      className="bg-gradient-to-r from-sky-500 via-blue-500 to-emerald-500 h-full transition-all duration-200"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
@@ -749,7 +751,7 @@ const ChatWindow = ({ isTyping }) => {
                 fileInputRef.current.click();
               }}
               disabled={uploading || isRecording}
-              className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full text-gray-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-shrink-0 w-11 h-11 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FiPaperclip size={20} />
             </button>
@@ -784,12 +786,12 @@ const ChatWindow = ({ isTyping }) => {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 bg-[#0b1020]/40 rounded-2xl flex items-center px-2 py-0.5 border border-white/5 transition-all focus-within:border-indigo-500/30">
+              <div className="flex-1 bg-slate-50/90 dark:bg-[#0b1020]/40 rounded-2xl flex items-center px-2 py-0.5 border border-slate-200/70 dark:border-white/5 transition-all focus-within:border-sky-400/40">
                 {/* Emoji Picker Button */}
                 <button
                   ref={smileButtonRef}
                   onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-yellow-500 transition-colors"
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-slate-500 hover:text-amber-500 dark:text-gray-400 transition-colors"
                 >
                   <FiSmile size={20} />
                 </button>
@@ -799,7 +801,7 @@ const ChatWindow = ({ isTyping }) => {
                   placeholder={
                     selectedFile ? "Add a caption..." : "Type a message..."
                   }
-                  className="flex-1 bg-transparent border-none focus:outline-none text-white py-3 px-2 text-sm placeholder-gray-500 font-medium font-sans"
+                  className="flex-1 bg-transparent border-none focus:outline-none text-slate-800 dark:text-white py-3 px-2 text-sm placeholder-slate-400 dark:placeholder-gray-500 font-medium font-sans"
                   value={newMessage}
                   onChange={typingHandler}
                   onKeyDown={handleSend}
@@ -810,7 +812,7 @@ const ChatWindow = ({ isTyping }) => {
                 {!newMessage.trim() && !selectedFile && (
                   <button
                     onClick={startRecording}
-                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 transition-colors"
+                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full text-slate-500 hover:text-rose-500 dark:text-gray-400 transition-colors"
                     title="Record Voice Message"
                   >
                     <FiMic size={20} />
@@ -828,8 +830,8 @@ const ChatWindow = ({ isTyping }) => {
               }
               className={`flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full transition-all shadow-lg ${
                 (newMessage.trim() || selectedFile) && !uploading
-                  ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-blue-500/20 hover:shadow-xl hover:scale-105 active:scale-95"
-                  : "bg-white/5 text-gray-500 border border-white/5 cursor-not-allowed"
+                  ? "bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 text-white shadow-sky-500/20 hover:shadow-xl hover:scale-105 active:scale-95"
+                  : "bg-slate-100 text-slate-400 border border-slate-200/70 dark:bg-white/5 dark:text-gray-500 dark:border-white/5 cursor-not-allowed"
               }`}
             >
               <FiSend

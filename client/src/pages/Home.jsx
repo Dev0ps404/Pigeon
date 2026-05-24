@@ -1,25 +1,32 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { initiateSocketConnection, disconnectSocket, getSocket } from '../socket/socketClient';
-import { setChats, addMessage, setMessages } from '../redux/slices/chatSlice';
-import { setMessagesSidebarWidth, setProfileSidebarWidth } from '../redux/slices/uiSlice';
-import api from '../services/api';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  initiateSocketConnection,
+  disconnectSocket,
+  getSocket,
+} from "../socket/socketClient";
+import { setChats, addMessage, setMessages } from "../redux/slices/chatSlice";
+import {
+  setMessagesSidebarWidth,
+  setProfileSidebarWidth,
+} from "../redux/slices/uiSlice";
+import api from "../services/api";
+import toast from "react-hot-toast";
 
-import ChatList from '../components/ChatList/ChatList';
-import ChatWindow from '../components/ChatWindow/ChatWindow';
-import RightSidebar from '../components/RightSidebar/RightSidebar';
+import ChatList from "../components/ChatList/ChatList";
+import ChatWindow from "../components/ChatWindow/ChatWindow";
+import RightSidebar from "../components/RightSidebar/RightSidebar";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { activeChat } = useSelector((state) => state.chat);
-  
-  const { 
-    messagesSidebarCollapsed, 
-    messagesSidebarWidth, 
-    profileSidebarExpanded, 
-    profileSidebarWidth 
+
+  const {
+    messagesSidebarCollapsed,
+    messagesSidebarWidth,
+    profileSidebarExpanded,
+    profileSidebarWidth,
   } = useSelector((state) => state.ui);
 
   const [socketConnected, setSocketConnected] = useState(false);
@@ -28,10 +35,10 @@ const Home = () => {
   useEffect(() => {
     const fetchChatsData = async () => {
       try {
-        const { data } = await api.get('/chat');
+        const { data } = await api.get("/chat");
         dispatch(setChats(data));
       } catch (error) {
-        toast.error('Failed to load chats');
+        toast.error("Failed to load chats");
       }
     };
     fetchChatsData();
@@ -39,12 +46,12 @@ const Home = () => {
 
   useEffect(() => {
     const socket = initiateSocketConnection();
-    socket.emit('setup', user);
-    socket.on('connected', () => setSocketConnected(true));
-    socket.on('typing', () => setIsTyping(true));
-    socket.on('stop typing', () => setIsTyping(false));
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
 
-    socket.on('message recieved', (newMessageRecieved) => {
+    socket.on("message recieved", (newMessageRecieved) => {
       if (!activeChat || activeChat._id !== newMessageRecieved.chat._id) {
         // Here we could implement unread badge logic
         toast.success(`New message from ${newMessageRecieved.sender.username}`);
@@ -61,11 +68,11 @@ const Home = () => {
     try {
       const { data } = await api.get(`/message/${chat._id}`);
       dispatch(setMessages(data));
-      
+
       const socket = getSocket();
-      socket?.emit('join chat', chat._id);
+      socket?.emit("join chat", chat._id);
     } catch (error) {
-      toast.error('Failed to load messages');
+      toast.error("Failed to load messages");
     }
   };
 
@@ -83,16 +90,16 @@ const Home = () => {
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
   };
 
   // Horizontal resizing handlers for Right Profile Sidebar
@@ -109,22 +116,27 @@ const Home = () => {
     };
 
     const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
   };
 
   return (
-    <div className="flex-1 flex h-full bg-[#f3f4f6]/60 dark:bg-[#0b1020]/20 overflow-hidden rounded-tl-[2.5rem] shadow-[-10px_0_40px_rgba(0,0,0,0.15)] border-t border-l border-white/50 dark:border-white/5 relative z-10 backdrop-blur-2xl">
-      
-      {/* Futuristic Mesh Gradient Background Orbs (ambient lighting) */}
+    <div className="flex-1 flex h-full bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100/70 dark:from-[#0b1020]/90 dark:via-[#0c1326]/85 dark:to-[#0a1222]/90 overflow-hidden rounded-tl-[2.5rem] shadow-[-10px_0_40px_rgba(0,0,0,0.15)] border-t border-l border-white/60 dark:border-white/5 relative z-10 backdrop-blur-2xl">
+      {/* Ambient gradient orbs (light) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 dark:hidden">
+        <div className="absolute -top-[15%] -left-[10%] w-[45vw] h-[45vw] bg-sky-400/15 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-15%] right-[-5%] w-[40vw] h-[40vw] bg-indigo-400/10 rounded-full blur-[120px]" />
+      </div>
+
+      {/* Futuristic Mesh Gradient Background Orbs (dark) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 hidden dark:block">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[120px] animate-blob-slow" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[120px] animate-blob-slower" />
@@ -132,7 +144,9 @@ const Home = () => {
       </div>
 
       {/* Chat List Column wrapper with responsive visibility */}
-      <div className={`${activeChat ? 'hidden md:flex' : 'flex'} h-full shrink-0 z-10`}>
+      <div
+        className={`${activeChat ? "hidden md:flex" : "flex"} h-full shrink-0 z-10`}
+      >
         <ChatList fetchMessages={fetchMessages} />
       </div>
 
@@ -153,7 +167,9 @@ const Home = () => {
       )}
 
       {/* Main Chat Window wrapper with responsive visibility */}
-      <div className={`${activeChat ? 'flex' : 'hidden md:flex'} flex-1 h-full min-w-0 z-10`}>
+      <div
+        className={`${activeChat ? "flex" : "hidden md:flex"} flex-1 h-full min-w-0 z-10`}
+      >
         <ChatWindow isTyping={isTyping} />
       </div>
 
@@ -170,7 +186,6 @@ const Home = () => {
       <div className="z-20">
         <RightSidebar />
       </div>
-
     </div>
   );
 };

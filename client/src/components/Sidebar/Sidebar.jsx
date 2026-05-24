@@ -57,7 +57,7 @@ const Sidebar = () => {
         minWidth: leftNavSidebarCollapsed ? 76 : 220,
       }}
       transition={{ duration: 0.4, ease: [0.25, 0.8, 0.25, 1] }}
-      className="hidden md:flex flex-col h-full bg-slate-50/90 dark:bg-[#0c1226]/40 border-r border-slate-200/60 dark:border-white/5 z-20 overflow-hidden backdrop-blur-3xl"
+      className="hidden md:flex flex-col h-full bg-white/80 dark:bg-[#0c1226]/35 border-r border-slate-200/70 dark:border-white/5 z-20 overflow-hidden backdrop-blur-3xl"
     >
       {/* ── Branding ── */}
       <div
@@ -68,7 +68,10 @@ const Sidebar = () => {
             className="flex-shrink-0 cursor-pointer transition-transform duration-300 hover:scale-105"
             onClick={() => dispatch(toggleLeftNavSidebar())}
           >
-            <PigeonLogo className="w-10 h-10 shadow-lg shadow-blue-500/10" variant="gradient" />
+            <PigeonLogo
+              className="w-10 h-10 shadow-lg shadow-blue-500/10"
+              variant="gradient"
+            />
           </div>
           {!leftNavSidebarCollapsed && (
             <motion.div
@@ -98,7 +101,7 @@ const Sidebar = () => {
           onClick={() =>
             navigate("/friends", { state: { openAddModal: true } })
           }
-          className={`flex items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-95 text-white rounded-2xl transition-all shadow-lg active:scale-[0.98] relative group ${
+          className={`flex items-center justify-center bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:opacity-95 text-white rounded-2xl transition-all shadow-lg active:scale-[0.98] relative group ${
             leftNavSidebarCollapsed
               ? "w-11 h-11 p-0"
               : "w-full py-3 gap-2.5 text-sm font-bold tracking-wide"
@@ -155,7 +158,10 @@ const Sidebar = () => {
             }`}
             title="Logout"
           >
-            <FiLogOut size={20} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            <FiLogOut
+              size={20}
+              className="transition-transform duration-300 group-hover:translate-x-0.5"
+            />
             {!leftNavSidebarCollapsed && (
               <span className="text-sm font-bold tracking-wide">Logout</span>
             )}
@@ -195,7 +201,9 @@ const Sidebar = () => {
               <FiChevronLeft size={20} />
             )}
             {!leftNavSidebarCollapsed && (
-              <span className="text-sm font-bold tracking-wide">Collapse Nav</span>
+              <span className="text-sm font-bold tracking-wide">
+                Collapse Nav
+              </span>
             )}
             {leftNavSidebarCollapsed && (
               <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
@@ -215,7 +223,9 @@ const Sidebar = () => {
           whileTap={{ scale: 0.98 }}
           onClick={() => navigate("/settings")}
           className={`flex items-center rounded-2xl cursor-pointer bg-slate-200/50 border border-slate-350/20 dark:bg-white/5 dark:border-white/5 hover:bg-slate-200 dark:hover:bg-white/10 hover:border-slate-300 dark:hover:border-white/10 transition-all ${
-            leftNavSidebarCollapsed ? "p-2 justify-center" : "p-3 gap-3.5 w-full"
+            leftNavSidebarCollapsed
+              ? "p-2 justify-center"
+              : "p-3 gap-3.5 w-full"
           }`}
         >
           <div className="relative flex-shrink-0">
@@ -258,8 +268,8 @@ const NavItem = ({ icon, label, active, to, collapsed }) => (
       ${collapsed ? "justify-center mx-3 my-0.5 p-3" : "gap-3.5 px-4 py-3 mx-3 my-0.5 text-sm font-bold tracking-wide"}
       ${
         active
-          ? "bg-blue-500/10 dark:bg-gradient-to-r dark:from-blue-500/10 dark:via-indigo-500/10 dark:to-purple-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/10 dark:border-white/5 shadow-[0_0_15px_rgba(59,130,246,0.05)] dark:shadow-[0_0_15px_rgba(59,130,246,0.08)]"
-          : "text-slate-500 hover:text-slate-900 hover:bg-slate-200/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 border border-transparent"
+          ? "bg-sky-500/10 dark:bg-gradient-to-r dark:from-sky-500/10 dark:via-cyan-500/10 dark:to-emerald-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/15 dark:border-white/5 shadow-[0_0_15px_rgba(14,165,233,0.08)] dark:shadow-[0_0_15px_rgba(59,130,246,0.08)]"
+          : "text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 dark:text-gray-400 dark:hover:text-white dark:hover:bg-white/5 border border-transparent"
       }
     `}
   >
@@ -267,11 +277,13 @@ const NavItem = ({ icon, label, active, to, collapsed }) => (
     {active && (
       <motion.span
         layoutId="sidebar-active-indicator"
-        className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-r-full bg-gradient-to-b from-blue-500 to-indigo-500"
+        className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-r-full bg-gradient-to-b from-sky-500 to-emerald-500"
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
       />
     )}
-    <span className={`shrink-0 transition-transform duration-300 group-hover:scale-115 ${active ? "text-blue-600 dark:text-blue-400" : "text-slate-500 group-hover:text-slate-900 dark:text-gray-400 dark:group-hover:text-white"}`}>
+    <span
+      className={`shrink-0 transition-transform duration-300 group-hover:scale-115 ${active ? "text-sky-600 dark:text-sky-300" : "text-slate-500 group-hover:text-slate-900 dark:text-gray-400 dark:group-hover:text-white"}`}
+    >
       {icon}
     </span>
     {!collapsed && <span>{label}</span>}
