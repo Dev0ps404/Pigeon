@@ -2049,8 +2049,7 @@ const Settings = () => {
             );
           })}
 
-          {/* ── Spacer ── */}
-          <div className="flex-1" />
+
 
           {/* ── Quick Actions at Bottom ── */}
           <div className="mt-6 pt-5 border-t border-gray-100 dark:border-white/[0.04] space-y-2.5">
