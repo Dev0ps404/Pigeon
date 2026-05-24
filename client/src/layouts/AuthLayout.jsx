@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import PigeonLogo from '../components/Logo';
 
 const AuthLayout = () => {
   return (
@@ -40,9 +41,7 @@ const AuthLayout = () => {
         <div className="w-16 h-16 bg-white border border-white/50 rounded-2xl flex items-center justify-center shadow-[0_12px_32px_rgba(0,102,204,0.08)] mb-6 transition-transform duration-300 hover:scale-105">
           <div className="w-11 h-11 bg-[#e3f2fd] rounded-xl flex items-center justify-center">
             {/* Highly visual cute pigeon silhouette facing right */}
-            <svg viewBox="0 0 24 24" className="w-7 h-7 text-[#0066cc]" fill="currentColor">
-              <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1.2 5.8a1 1 0 1 1-1-1 1 1 0 0 1 1 1zm-1 9.7c-2.4 0-4.3-1.6-4.5-3.5h9c-.2 1.9-2.1 3.5-4.5 3.5zM15 12a1 1 0 1 1 1-1 1 1 0 0 1-1 1z" />
-            </svg>
+            <PigeonLogo className="w-7 h-7" variant="silhouette" color="#0066cc" />
           </div>
         </div>
 

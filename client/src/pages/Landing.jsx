@@ -15,6 +15,7 @@ import {
   FiServer,
   FiCpu
 } from 'react-icons/fi';
+import PigeonLogo from '../components/Logo';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -28,11 +29,7 @@ const Landing = () => {
       {/* Navigation Header */}
       <header className="w-full h-20 px-6 md:px-12 flex items-center justify-between border-b border-[#e2e8f0] bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#0066cc] rounded-xl flex items-center justify-center shadow-md shadow-blue-500/20">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
-          </div>
+          <PigeonLogo className="w-10 h-10 shadow-md shadow-blue-500/20 rounded-xl" variant="gradient" />
           <span className="font-bold text-2xl tracking-tight text-[#0f172a]">
             Pigeon
           </span>
@@ -152,11 +149,7 @@ const Landing = () => {
             <div className="w-64 border-r border-[#e2e8f0] bg-white p-4 flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2.5 mb-6">
-                  <div className="w-7 h-7 bg-[#0066cc] rounded-lg flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                  </div>
+                  <PigeonLogo className="w-7 h-7 rounded-lg" variant="gradient" />
                   <span className="font-bold text-base text-[#0f172a]">Pigeon Tech</span>
                 </div>
                 
@@ -402,11 +395,7 @@ const Landing = () => {
           {/* Col 1 */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-[#0066cc] rounded-lg flex items-center justify-center">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </div>
+              <PigeonLogo className="w-7 h-7 rounded-lg" variant="gradient" />
               <span className="font-bold text-lg text-[#0f172a]">Pigeon</span>
             </div>
             <p className="text-[#64748b] leading-relaxed">
