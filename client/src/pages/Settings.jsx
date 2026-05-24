@@ -2048,6 +2048,56 @@ const Settings = () => {
               </button>
             );
           })}
+
+          {/* ── Spacer ── */}
+          <div className="flex-1" />
+
+          {/* ── Quick Actions at Bottom ── */}
+          <div className="mt-6 pt-5 border-t border-gray-100 dark:border-white/[0.04] space-y-2.5">
+            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest block pl-2 mb-3">
+              Quick Actions
+            </span>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => {
+                const next = selectedTheme === 'dark' ? 'light' : selectedTheme === 'light' ? 'dark' : 'dark';
+                handleSelectTheme(next, next === 'dark' ? 'Dark' : 'Light');
+              }}
+              className="relative flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer select-none text-left w-full group text-slate-450 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-transparent hover:bg-slate-100/60 dark:hover:bg-white/[0.02]"
+            >
+              <div className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-150 dark:border-white/[0.03] text-slate-455 dark:text-slate-500 group-hover:bg-gray-200 dark:group-hover:bg-white/10 group-hover:text-gray-800 dark:group-hover:text-white transition-all duration-300">
+                {selectedTheme === 'dark' ? <FiSun size={16} className="stroke-[2.5]" /> : <FiMoon size={16} className="stroke-[2.5]" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12.5px] font-bold text-gray-850 dark:text-white truncate leading-tight">
+                  {selectedTheme === 'dark' ? 'Switch to Light' : 'Switch to Dark'}
+                </p>
+                <p className="text-[10px] text-slate-400 truncate mt-0.5 font-medium leading-tight">
+                  Toggle display theme mode
+                </p>
+              </div>
+            </button>
+
+            {/* Logout */}
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="relative flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer select-none text-left w-full group text-red-400 hover:text-red-500 border border-transparent hover:bg-red-50/60 dark:hover:bg-red-950/10"
+            >
+              <div className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/20 text-red-400 group-hover:bg-red-100 dark:group-hover:bg-red-950/30 group-hover:text-red-500 transition-all duration-300">
+                <FiLogOut size={16} className="stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12.5px] font-bold text-red-500 dark:text-red-400 truncate leading-tight">
+                  Log Out
+                </p>
+                <p className="text-[10px] text-red-300 dark:text-red-500/60 truncate mt-0.5 font-medium leading-tight">
+                  End your current session
+                </p>
+              </div>
+            </button>
+          </div>
+
         </div>
 
       </div>
