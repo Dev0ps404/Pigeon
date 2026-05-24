@@ -244,7 +244,7 @@ Pigeon/
 # 1️⃣ Clone Repository
 
 ```bash
-git clone https://github.com/your-username/pigeon.git
+git clone https://github.com/Dev0ps404/pigeon.git
 cd pigeon
 ```
 
@@ -292,11 +292,11 @@ npm run dev
 
 ## Frontend Deployment
 
-* Vercel
+* Vercel : **https://pigeon-beta.vercel.app/**
 
 ## Backend Deployment
 
-* Render
+* Render : **https://pigeon-kfwq.onrender.com**
 
 ## Database
 
