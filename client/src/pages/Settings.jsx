@@ -660,8 +660,8 @@ const Settings = () => {
             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary-500 to-primary-600 opacity-60 pointer-events-none" />
           </div>
 
-          {/* Premium Navigation Tabs with Framer Motion Sliding Indicator */}
-          <div className="flex gap-2.5 overflow-x-auto whitespace-nowrap scrollbar-none py-2 relative z-10 px-0.5">
+          {/* Premium Navigation Tabs with Framer Motion Sliding Indicator (Mobile/Tablet Only) */}
+          <div className="flex lg:hidden gap-2.5 overflow-x-auto whitespace-nowrap scrollbar-none py-2 relative z-10 px-0.5">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id && !searchQuery;
@@ -681,7 +681,7 @@ const Settings = () => {
                   {/* Framer Motion sliding background */}
                   {isActive && (
                     <motion.div 
-                      layoutId="activeSettingsTab"
+                      layoutId="activeSettingsTabMobile"
                       className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 rounded-2xl shadow-lg shadow-primary-500/20"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
@@ -697,8 +697,11 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Content Pane */}
-        <div className="flex-1 bg-[#f8fafc] dark:bg-[#070c14] overflow-y-auto p-6 lg:p-10 h-full custom-scrollbar relative flex flex-col">
+        {/* Desktop Split Layout Pane Container */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden h-full w-full">
+          
+          {/* Left Side: Scrollable Settings Content Area */}
+          <div className="flex-1 bg-[#f8fafc] dark:bg-[#070c14] overflow-y-auto p-6 lg:p-10 h-full custom-scrollbar relative flex flex-col">
 
           <AnimatePresence mode="wait">
             
@@ -1979,7 +1982,77 @@ const Settings = () => {
 
         </div>
 
+        {/* Right Side: High-Fidelity Vertical Sub-Navigation Sidebar Panel (Desktop Only) */}
+        <div className="hidden lg:flex flex-col w-76 shrink-0 bg-white dark:bg-[#090d16] border-l border-gray-150 dark:border-white/[0.04] p-5 overflow-y-auto custom-scrollbar space-y-2 select-none relative">
+          
+          {/* Ambient Background Lights */}
+          <div className="absolute bottom-[-50px] right-[-5%] w-48 h-48 bg-gradient-to-tr from-primary-500/10 to-primary-600/10 dark:from-primary-500/5 dark:to-primary-600/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="mb-4">
+            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest block pl-2">
+              Settings Menu
+            </span>
+          </div>
+
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id && !searchQuery;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setSearchQuery('');
+                }}
+                className={`relative flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer select-none text-left w-full group ${
+                  isActive 
+                    ? 'bg-[#182343]/60 border border-white/[0.05] text-white shadow-lg' 
+                    : 'text-slate-450 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-transparent hover:bg-slate-100/60 dark:hover:bg-white/[0.02]'
+                }`}
+              >
+                {/* Sliding active pill indicator */}
+                {isActive && (
+                  <motion.span
+                    layoutId="settings-active-pill"
+                    className="absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-r-full bg-gradient-to-b from-primary-500 to-indigo-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                    transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  />
+                )}
+
+                {/* Icon Container */}
+                <div
+                  className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-300
+                    ${
+                      isActive
+                        ? 'bg-gradient-to-tr from-primary-600 to-primary-500 text-white shadow-md shadow-primary-500/10'
+                        : 'bg-gray-100 dark:bg-white/5 border border-gray-150 dark:border-white/[0.03] text-slate-455 dark:text-slate-500 group-hover:bg-gray-200 dark:group-hover:bg-white/10 group-hover:text-gray-800 dark:group-hover:text-white'
+                    }
+                  `}
+                >
+                  <Icon size={16} className="stroke-[2.5]" />
+                </div>
+
+                {/* Tab Labels */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12.5px] font-bold text-gray-850 dark:text-white truncate leading-tight">
+                    {tab.label}
+                  </p>
+                  <p className="text-[10px] text-slate-400 truncate mt-0.5 font-medium leading-tight">
+                    {tab.desc}
+                  </p>
+                </div>
+
+                {isActive && (
+                  <FiChevronRight size={14} className="text-primary-500 dark:text-primary-400 shrink-0 animate-pulse" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+
       </div>
+
+    </div>
 
       {/* CONFIRM LOGOUT MODAL OVERLAY */}
       <AnimatePresence>
