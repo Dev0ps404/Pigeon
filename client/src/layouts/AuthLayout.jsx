@@ -3,7 +3,7 @@ import PigeonLogo from '../components/Logo';
 
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#eef5fc] transition-colors duration-500">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden bg-[#eef5fc] dark:bg-[#0B1020] transition-colors duration-500">
       
       {/* Abstract Startup Arrow & Line Background Layer */}
       <svg className="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" fill="none">

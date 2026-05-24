@@ -32,7 +32,7 @@ const MessageBubble = ({ message }) => {
     if (attachments.length === 0) return null;
 
     return (
-      <div className="flex flex-col gap-2.5 w-full">
+      <div className="flex flex-col gap-3 w-full">
         {attachments.map((attachment, index) => {
           const { url, type, fileName } = attachment;
           if (!url) return null;
@@ -42,22 +42,22 @@ const MessageBubble = ({ message }) => {
               return (
                 <div 
                   key={attachment.id || attachment._id || attachment.public_id || `att-${message._id}-${index}`}
-                  className="relative group overflow-hidden rounded-2xl cursor-pointer shadow-sm hover:shadow-md transition-all border border-gray-200/50 dark:border-slate-800/80" 
+                  className="relative group overflow-hidden rounded-2xl cursor-pointer shadow-md hover:shadow-lg transition-all border border-white/5" 
                   onClick={() => window.open(url, '_blank')}
                 >
                   <img referrerPolicy="no-referrer" 
                     src={url} 
                     alt={fileName || "Shared Attachment"} 
-                    className="max-w-xs md:max-w-md max-h-72 object-cover rounded-2xl transition-transform duration-300 group-hover:scale-[1.02]" 
+                    className="max-w-xs md:max-w-md max-h-72 object-cover rounded-2xl transition-transform duration-300 group-hover:scale-[1.015]" 
                   />
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
-                    <span className="bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-md select-none">Open Original</span>
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
+                    <span className="bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-md select-none backdrop-blur-sm">Open Original</span>
                   </div>
                 </div>
               );
             case 'video':
               return (
-                <div key={attachment.id || attachment._id || attachment.public_id || `att-${message._id}-${index}`} className="relative overflow-hidden rounded-2xl shadow-sm border border-gray-200/50 dark:border-slate-800/80">
+                <div key={attachment.id || attachment._id || attachment.public_id || `att-${message._id}-${index}`} className="relative overflow-hidden rounded-2xl shadow-md border border-white/5">
                   <video 
                     src={url} 
                     controls 
@@ -67,14 +67,14 @@ const MessageBubble = ({ message }) => {
               );
             case 'audio':
               return (
-                <div key={attachment.id || attachment._id || attachment.public_id || `att-${message._id}-${index}`} className="flex flex-col gap-2 p-3.5 rounded-xl bg-gray-50/70 dark:bg-[#0f172a]/60 border border-gray-150/40 dark:border-slate-800/80 min-w-[260px] max-w-xs select-none">
+                <div key={attachment.id || attachment._id || attachment.public_id || `att-${message._id}-${index}`} className="flex flex-col gap-3 p-4 rounded-2xl bg-[#0c1226]/50 border border-white/5 min-w-[270px] max-w-xs select-none backdrop-blur-md">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8.5 h-8.5 rounded-full bg-red-100 dark:bg-red-950/40 text-red-500 dark:text-red-400 flex items-center justify-center shrink-0">
-                      <FiMic size={15} className="animate-pulse" />
+                    <div className="w-9 h-9 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center shrink-0">
+                      <FiMic size={16} className="animate-pulse" />
                     </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-bold text-gray-800 dark:text-gray-200">Voice Note</span>
-                      <span className="text-[10px] font-semibold text-gray-400">Audio Recording</span>
+                    <div className="flex flex-col min-w-0 text-left">
+                      <span className="text-xs font-bold text-white">Voice Note</span>
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Audio Recording</span>
                     </div>
                   </div>
                   <audio 
@@ -93,20 +93,20 @@ const MessageBubble = ({ message }) => {
                   href={url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center p-3.5 bg-gray-50/80 dark:bg-[#0f172a]/60 border border-gray-150/40 dark:border-slate-800/80 hover:bg-gray-100/90 dark:hover:bg-[#0f172a]/80 hover:border-blue-400/30 dark:hover:border-blue-500/30 rounded-xl cursor-pointer transition-all min-w-[260px] max-w-xs select-none group text-left"
+                  className="flex items-center p-4 bg-[#0c1226]/40 border border-white/5 hover:bg-[#0c1226]/60 hover:border-blue-500/30 rounded-2xl cursor-pointer transition-all min-w-[270px] max-w-xs select-none group text-left backdrop-blur-md"
                 >
-                  <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center shrink-0">
                     <FiFile size={18} />
                   </div>
-                  <div className="ml-3 flex-1 overflow-hidden">
-                    <p className="text-xs font-bold text-gray-800 dark:text-gray-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  <div className="ml-3.5 flex-1 overflow-hidden">
+                    <p className="text-xs font-bold text-gray-200 truncate group-hover:text-blue-400 transition-colors">
                       {fileDisplayName}
                     </p>
-                    <p className="text-[10px] text-gray-500 dark:text-slate-500 font-semibold mt-0.5">
-                      Download Attachment
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5">
+                      Download File
                     </p>
                   </div>
-                  <FiDownload className="text-gray-400 group-hover:text-blue-500 transition-colors ml-2 shrink-0" size={16} />
+                  <FiDownload className="text-gray-400 group-hover:text-blue-400 transition-colors ml-2 shrink-0" size={16} />
                 </a>
               );
           }
@@ -122,7 +122,7 @@ const MessageBubble = ({ message }) => {
       <div className={`flex flex-col gap-2 ${isMine ? 'items-end' : 'items-start'}`}>
         {hasMedia && renderMedia()}
         {!isAutoGeneratedMediaMsg && message.content && (
-          <p className="text-[15px] leading-relaxed break-words">
+          <p className="text-[14.5px] leading-relaxed break-words text-left">
             {message.content}
           </p>
         )}
@@ -132,15 +132,16 @@ const MessageBubble = ({ message }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      initial={{ opacity: 0, y: 12, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.3 }}
       className={`flex w-full ${isMine ? 'justify-end' : 'justify-start'} mb-4`}
     >
       {!isMine && (
         <img referrerPolicy="no-referrer" 
           src={message.sender.profilePicture || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"} 
           alt="avatar" 
-          className="w-8 h-8 rounded-full object-cover mr-3 self-end shadow-sm"
+          className="w-9 h-9 rounded-full object-cover mr-3 self-end shadow-md border border-white/5"
         />
       )}
       <div className={`flex flex-col max-w-[75%] lg:max-w-[65%] ${isMine ? 'items-end' : 'items-start'}`}>
@@ -152,21 +153,21 @@ const MessageBubble = ({ message }) => {
         ) : (
           // Render inside a styled chat bubble
           <div 
-            className={`px-5 py-3 shadow-sm relative ${
+            className={`px-5 py-3.5 shadow-md relative ${
               isMine 
-                ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-2xl rounded-tr-sm' 
-                : 'bg-white dark:bg-dark-card text-gray-800 dark:text-gray-200 rounded-2xl rounded-tl-sm border border-gray-100 dark:border-dark-border'
+                ? 'bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white rounded-2xl rounded-tr-sm border border-white/10' 
+                : 'bg-white/5 backdrop-blur-md text-gray-200 rounded-2xl rounded-tl-sm border border-white/5'
             }`}
           >
             {renderBubbleContent()}
           </div>
         )}
-        <div className="flex items-center gap-2 mt-1.5 px-1">
-          <span className="text-[11px] font-medium text-gray-400">
+        <div className="flex items-center gap-1.5 mt-1.5 px-1.5">
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">
             {format(new Date(message.createdAt), 'hh:mm a')}
           </span>
           {isMine && (
-            <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           )}

@@ -122,10 +122,17 @@ const Home = () => {
   };
 
   return (
-    <div className="flex-1 flex h-full bg-[#f3f4f6] dark:bg-[#030712] overflow-hidden rounded-tl-[2.5rem] shadow-[-10px_0_30px_rgba(0,0,0,0.05)] border-t border-l border-white/50 dark:border-white/5 relative z-10">
+    <div className="flex-1 flex h-full bg-[#f3f4f6]/60 dark:bg-[#0b1020]/20 overflow-hidden rounded-tl-[2.5rem] shadow-[-10px_0_40px_rgba(0,0,0,0.15)] border-t border-l border-white/50 dark:border-white/5 relative z-10 backdrop-blur-2xl">
       
+      {/* Futuristic Mesh Gradient Background Orbs (ambient lighting) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 hidden dark:block">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[120px] animate-blob-slow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[120px] animate-blob-slower" />
+        <div className="absolute top-[30%] right-[20%] w-[35vw] h-[35vw] bg-cyan-600/5 rounded-full blur-[100px] animate-blob-slowest" />
+      </div>
+
       {/* Chat List Column wrapper with responsive visibility */}
-      <div className={`${activeChat ? 'hidden md:flex' : 'flex'} h-full shrink-0`}>
+      <div className={`${activeChat ? 'hidden md:flex' : 'flex'} h-full shrink-0 z-10`}>
         <ChatList fetchMessages={fetchMessages} />
       </div>
 
@@ -146,7 +153,7 @@ const Home = () => {
       )}
 
       {/* Main Chat Window wrapper with responsive visibility */}
-      <div className={`${activeChat ? 'flex' : 'hidden md:flex'} flex-1 h-full min-w-0`}>
+      <div className={`${activeChat ? 'flex' : 'hidden md:flex'} flex-1 h-full min-w-0 z-10`}>
         <ChatWindow isTyping={isTyping} />
       </div>
 
@@ -160,7 +167,9 @@ const Home = () => {
       )}
 
       {/* Profile/Info Right Sidebar */}
-      <RightSidebar />
+      <div className="z-20">
+        <RightSidebar />
+      </div>
 
     </div>
   );

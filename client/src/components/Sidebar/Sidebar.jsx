@@ -28,15 +28,16 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme, leftNavSidebarCollapsed } = useSelector((state) => state.ui);
+
+  const { leftNavSidebarCollapsed } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
       await api.post("/auth/logout");
       dispatch(logout());
+      toast.success("Successfully logged out!");
       navigate("/login");
-      toast.success("Logged out successfully");
     } catch (error) {
       toast.error("Logout failed");
     }
@@ -44,32 +45,30 @@ const Sidebar = () => {
 
   const navItems = [
     { icon: <FiMessageSquare size={20} />, label: "Chats", to: "/" },
-    { icon: <FiUsers size={20} />, label: "Groups", to: "/groups" },
+    { icon: <FiUsers size={20} />, label: "Friends", to: "/friends" },
     { icon: <FiPhoneCall size={20} />, label: "Calls", to: "/calls" },
-    { icon: <FiUserCheck size={20} />, label: "Contacts", to: "/friends" },
     { icon: <FiSettings size={20} />, label: "Settings", to: "/settings" },
   ];
 
   return (
     <motion.aside
       animate={{
-        width: leftNavSidebarCollapsed ? 72 : 200,
-        minWidth: leftNavSidebarCollapsed ? 72 : 200,
+        width: leftNavSidebarCollapsed ? 76 : 220,
+        minWidth: leftNavSidebarCollapsed ? 76 : 220,
       }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="hidden md:flex flex-col h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-20 overflow-hidden"
+      transition={{ duration: 0.4, ease: [0.25, 0.8, 0.25, 1] }}
+      className="hidden md:flex flex-col h-full bg-[#111827]/40 dark:bg-[#0c1226]/40 border-r border-white/5 z-20 overflow-hidden backdrop-blur-3xl"
     >
       {/* ── Branding ── */}
       <div
-        className={`pt-7 pb-6 ${leftNavSidebarCollapsed ? "px-0 flex justify-center" : "px-5"}`}
+        className={`pt-8 pb-6 ${leftNavSidebarCollapsed ? "px-0 flex justify-center" : "px-6"}`}
       >
         <div className="flex items-center gap-3">
-          {/* Bird / phone icon in a blue circle */}
           <div
-            className="flex-shrink-0 cursor-pointer"
+            className="flex-shrink-0 cursor-pointer transition-transform duration-300 hover:scale-105"
             onClick={() => dispatch(toggleLeftNavSidebar())}
           >
-            <PigeonLogo className="w-10 h-10" variant="gradient" />
+            <PigeonLogo className="w-10 h-10 shadow-lg shadow-blue-500/10" variant="gradient" />
           </div>
           {!leftNavSidebarCollapsed && (
             <motion.div
@@ -78,44 +77,46 @@ const Sidebar = () => {
               exit={{ opacity: 0, x: -10 }}
               className="flex flex-col leading-tight"
             >
-              <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+              <span className="text-[17px] font-extrabold bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 Pigeon
               </span>
-              <span className="text-[11px] text-gray-400 dark:text-gray-500 -mt-0.5">
-                Messaging
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+                Terminal
               </span>
             </motion.div>
           )}
         </div>
       </div>
 
-      {/* â”€â”€ Add Friend Button â”€â”€ */}
+      {/* ── Add Friend Button ── */}
       <div
-        className={`mb-4 ${leftNavSidebarCollapsed ? "px-2 flex justify-center" : "px-4"}`}
+        className={`mb-5 ${leftNavSidebarCollapsed ? "px-3 flex justify-center" : "px-5"}`}
       >
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() =>
             navigate("/friends", { state: { openAddModal: true } })
           }
-          className={`flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all shadow-sm active:scale-[0.98] relative group ${
+          className={`flex items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:opacity-95 text-white rounded-2xl transition-all shadow-lg active:scale-[0.98] relative group ${
             leftNavSidebarCollapsed
-              ? "w-10 h-10 p-0"
-              : "w-full py-2.5 gap-2 text-sm font-semibold"
+              ? "w-11 h-11 p-0"
+              : "w-full py-3 gap-2.5 text-sm font-bold tracking-wide"
           }`}
         >
           <FiUserPlus size={16} className="shrink-0" />
           {!leftNavSidebarCollapsed && <span>Add New Friend</span>}
 
           {leftNavSidebarCollapsed && (
-            <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50">
+            <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
               Add New Friend
             </div>
           )}
-        </button>
+        </motion.button>
       </div>
 
-      {/* â”€â”€ Navigation â”€â”€ */}
-      <nav className="flex-1 flex flex-col gap-0.5 mt-1">
+      {/* ── Navigation ── */}
+      <nav className="flex-1 flex flex-col gap-1 mt-2">
         {navItems.map((item) => {
           const isActive =
             item.to === "/"
@@ -135,48 +136,52 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* â”€â”€ Action Buttons â”€â”€ */}
-      <div className="mt-auto flex flex-col gap-1 pb-2">
-        {/* â”€â”€ Logout Button â”€â”€ */}
+      {/* ── Action Buttons ── */}
+      <div className="mt-auto flex flex-col gap-1 pb-3">
+        {/* ── Logout Button ── */}
         <div
           className={
-            leftNavSidebarCollapsed ? "px-2 flex justify-center" : "px-4"
+            leftNavSidebarCollapsed ? "px-3 flex justify-center" : "px-5"
           }
         >
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleLogout}
-            className={`flex items-center text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 transition-all group relative ${
+            className={`flex items-center text-gray-400 hover:text-red-400 dark:text-gray-400 dark:hover:text-red-400 rounded-2xl hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group relative ${
               leftNavSidebarCollapsed
-                ? "w-10 h-10 justify-center"
-                : "w-full py-2.5 px-3 gap-2"
+                ? "w-11 h-11 justify-center"
+                : "w-full py-3 px-4 gap-3.5"
             }`}
             title="Logout"
           >
-            <FiLogOut size={20} />
+            <FiLogOut size={20} className="transition-transform duration-300 group-hover:translate-x-0.5" />
             {!leftNavSidebarCollapsed && (
-              <span className="text-sm font-medium">Logout</span>
+              <span className="text-sm font-bold tracking-wide">Logout</span>
             )}
 
             {leftNavSidebarCollapsed && (
-              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50">
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
                 Logout
               </div>
             )}
-          </button>
+          </motion.button>
         </div>
 
-        {/* â”€â”€ Toggle Sidebar Button â”€â”€ */}
+        {/* ── Toggle Sidebar Button ── */}
         <div
           className={
-            leftNavSidebarCollapsed ? "px-2 flex justify-center" : "px-4"
+            leftNavSidebarCollapsed ? "px-3 flex justify-center" : "px-5"
           }
         >
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => dispatch(toggleLeftNavSidebar())}
-            className={`flex items-center text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all group relative ${
+            className={`flex items-center text-gray-400 hover:text-blue-400 dark:text-gray-400 dark:hover:text-blue-400 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group relative ${
               leftNavSidebarCollapsed
-                ? "w-10 h-10 justify-center"
-                : "w-full py-2.5 px-3 gap-2"
+                ? "w-11 h-11 justify-center"
+                : "w-full py-3 px-4 gap-3.5"
             }`}
             title={
               leftNavSidebarCollapsed
@@ -190,25 +195,27 @@ const Sidebar = () => {
               <FiChevronLeft size={20} />
             )}
             {!leftNavSidebarCollapsed && (
-              <span className="text-sm font-medium">Collapse Nav</span>
+              <span className="text-sm font-bold tracking-wide">Collapse Nav</span>
             )}
             {leftNavSidebarCollapsed && (
-              <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50">
+              <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
                 Expand Navigation
               </div>
             )}
-          </button>
+          </motion.button>
         </div>
       </div>
 
-      {/* â”€â”€ User profile â”€â”€ */}
+      {/* ── User Profile Capsule ── */}
       <div
-        className={`pb-5 ${leftNavSidebarCollapsed ? "px-2 flex justify-center" : "px-4"}`}
+        className={`pb-6 pt-2 ${leftNavSidebarCollapsed ? "px-3 flex justify-center" : "px-5"}`}
       >
-        <div
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={() => navigate("/settings")}
-          className={`flex items-center rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-            leftNavSidebarCollapsed ? "p-1" : "p-2 gap-3"
+          className={`flex items-center rounded-2xl cursor-pointer bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all ${
+            leftNavSidebarCollapsed ? "p-2 justify-center" : "p-3 gap-3.5 w-full"
           }`}
         >
           <div className="relative flex-shrink-0">
@@ -219,50 +226,58 @@ const Sidebar = () => {
               }
               alt="Profile"
               referrerPolicy="no-referrer"
-              className="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+              className="w-10 h-10 rounded-full object-cover border border-white/10"
             />
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
+            {/* Pulsing online green status indicator */}
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0f172a]">
+              <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+            </span>
           </div>
           {!leftNavSidebarCollapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+            <div className="min-w-0 flex-1 text-left">
+              <p className="text-[14px] font-bold text-white truncate leading-tight">
                 {user?.username || "User"}
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">Online</p>
+              <p className="text-[11px] font-semibold text-green-400 mt-0.5 tracking-wide flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                Online
+              </p>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </motion.aside>
   );
 };
 
-/* â”€â”€ Nav Item â”€â”€ */
+/* ── Nav Item Component ── */
 const NavItem = ({ icon, label, active, to, collapsed }) => (
   <Link
     to={to}
-    className={`relative flex items-center transition-all duration-150 rounded-xl group
-      ${collapsed ? "justify-center mx-2 my-0.5 p-3" : "gap-3 px-5 py-2.5 mx-2 my-0.5 text-sm font-medium"}
+    className={`relative flex items-center transition-all duration-300 rounded-2xl group
+      ${collapsed ? "justify-center mx-3 my-0.5 p-3" : "gap-3.5 px-4 py-3 mx-3 my-0.5 text-sm font-bold tracking-wide"}
       ${
         active
-          ? "bg-blue-50/70 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400"
-          : "text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800/40"
+          ? "bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-purple-500/10 text-blue-400 border border-white/5 shadow-[0_0_15px_rgba(59,130,246,0.08)]"
+          : "text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
       }
     `}
   >
-    {/* Active indicator */}
+    {/* Sliding active bar indicator */}
     {active && (
       <motion.span
         layoutId="sidebar-active-indicator"
-        className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-blue-600 dark:bg-blue-400"
-        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        className="absolute left-0 top-3.5 bottom-3.5 w-[3px] rounded-r-full bg-gradient-to-b from-blue-400 to-indigo-400"
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
       />
     )}
-    <span className="shrink-0">{icon}</span>
+    <span className={`shrink-0 transition-transform duration-300 group-hover:scale-115 ${active ? "text-blue-400" : "text-gray-400 group-hover:text-white"}`}>
+      {icon}
+    </span>
     {!collapsed && <span>{label}</span>}
 
     {collapsed && (
-      <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50">
+      <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
         {label}
       </div>
     )}
