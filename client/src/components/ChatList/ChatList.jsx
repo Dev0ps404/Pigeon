@@ -117,6 +117,8 @@ const ChatList = ({ fetchMessages }) => {
             ? null
             : chat.users.find((u) => u._id !== user._id)?.profilePicture;
           const isActive = activeChat?._id === chat._id;
+          const otherUser = chat.isGroupChat ? null : chat.users?.find((u) => u._id !== user?._id);
+          const isOnline = otherUser?.status === "online";
 
           return (
             <motion.div
@@ -148,8 +150,8 @@ const ChatList = ({ fetchMessages }) => {
                   </div>
                 )}
                 {/* pulsing green online indicator */}
-                {!chat.isGroupChat && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-100 dark:border-[#111827] rounded-full">
+                {!chat.isGroupChat && isOnline && (
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-100 dark:border-[#111827] rounded-full z-10">
                     <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
                   </span>
                 )}

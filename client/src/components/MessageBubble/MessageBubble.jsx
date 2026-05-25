@@ -52,7 +52,100 @@ const MessageBubble = ({
   onForward,
 }) => {
   const { user } = useSelector((state) => state.auth);
+  const { activeChat } = useSelector((state) => state.chat);
   const isMine = message.sender._id === user._id;
+
+  const getReceiptStatus = () => {
+    if (!isMine || message.isDeleted) return "none";
+
+    const seenBy = message.seenBy || [];
+    const deliveredTo = message.deliveredTo || [];
+
+    if (activeChat) {
+      if (activeChat.isGroupChat) {
+        const otherParticipantIds = activeChat.users
+          ?.map((u) => (typeof u === "object" ? u._id : u))
+          ?.filter((uId) => uId !== user._id) || [];
+
+        if (otherParticipantIds.length === 0) return "sent";
+
+        const hasEveryoneSeen = otherParticipantIds.every((uId) => seenBy.includes(uId));
+        if (hasEveryoneSeen) return "seen";
+
+        const hasEveryoneReceived = otherParticipantIds.every((uId) => deliveredTo.includes(uId));
+        if (hasEveryoneReceived) return "delivered";
+
+        return "sent";
+      } else {
+        const recipient = activeChat.users?.find((u) => u._id !== user._id);
+        if (!recipient) return "sent";
+        const recipientId = recipient._id;
+
+        if (seenBy.includes(recipientId)) return "seen";
+        if (deliveredTo.includes(recipientId)) return "delivered";
+        return "sent";
+      }
+    }
+
+    return "sent";
+  };
+
+  const renderReceipts = () => {
+    const status = getReceiptStatus();
+    if (status === "none") return null;
+
+    if (status === "seen") {
+      return (
+        <div className="flex items-center text-sky-400 dark:text-blue-400 select-none" title="Seen">
+          <svg
+            className="w-3.5 h-3.5 animate-bounce-once"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
+          </svg>
+        </div>
+      );
+    }
+
+    if (status === "delivered") {
+      return (
+        <div className="flex items-center text-slate-400 dark:text-slate-500 select-none" title="Delivered">
+          <svg
+            className="w-3.5 h-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
+          </svg>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center text-slate-400 dark:text-slate-500 select-none" title="Sent">
+        <svg
+          className="w-3.5 h-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+    );
+  };
 
   const [showMenu, setShowMenu] = useState(false);
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
@@ -579,19 +672,7 @@ const MessageBubble = ({
             <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wide">
               {format(new Date(message.createdAt), "hh:mm a")}
             </span>
-            {isMine && !message.isDeleted && (
-              <svg
-                className="w-3.5 h-3.5 text-sky-400"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            )}
+            {renderReceipts()}
           </div>
 
           {/* ── Premium Context Menu Panel overlay ── */}

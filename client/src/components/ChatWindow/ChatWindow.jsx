@@ -22,6 +22,7 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 import MessageBubble from "../MessageBubble/MessageBubble";
+import { format } from "date-fns";
 import { getSocket } from "../../socket/socketClient";
 import api from "../../services/api";
 import toast from "react-hot-toast";
@@ -36,6 +37,37 @@ const ChatWindow = ({ isTyping }) => {
   const { activeChat, messages } = useSelector((state) => state.chat);
   const { theme } = useSelector((state) => state.ui);
   const { chats } = useSelector((state) => state.chat);
+
+  const otherParticipant = activeChat?.isGroupChat 
+    ? null 
+    : activeChat?.users?.find((u) => u._id !== user._id);
+  const isOnline = otherParticipant?.status === "online";
+
+  const formatLastSeen = (lastSeenTime) => {
+    if (!lastSeenTime) return "Offline";
+    try {
+      const date = new Date(lastSeenTime);
+      const now = new Date();
+      
+      const isToday = date.toDateString() === now.toDateString();
+      
+      const yesterday = new Date();
+      yesterday.setDate(now.getDate() - 1);
+      const isYesterday = date.toDateString() === yesterday.toDateString();
+      
+      const formattedTime = format(date, "hh:mm a");
+      
+      if (isToday) {
+        return `Last seen today at ${formattedTime}`;
+      } else if (isYesterday) {
+        return `Last seen yesterday at ${formattedTime}`;
+      } else {
+        return `Last seen on ${format(date, "MM/dd/yyyy")} at ${formattedTime}`;
+      }
+    } catch (e) {
+      return "Last seen recently";
+    }
+  };
 
   const [activeReply, setActiveReply] = useState(null);
   const [showForwardModal, setShowForwardModal] = useState(false);
@@ -688,16 +720,26 @@ const ChatWindow = ({ isTyping }) => {
                 </div>
               )}
               {/* Pulsing online indicator */}
-              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#111827] rounded-full">
-                <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
-              </div>
+              {(!activeChat?.isGroupChat ? isOnline : true) && (
+                <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#111827] rounded-full z-10">
+                  <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75" />
+                </div>
+              )}
             </div>
             <div className="flex flex-col min-w-0 text-left">
               <h3 className="font-bold text-base md:text-lg text-slate-900 dark:text-white leading-tight truncate">
                 {chatName}
               </h3>
-              <span className="text-xs md:text-sm font-bold text-emerald-600 dark:text-emerald-400 h-4 md:h-5 mt-0.5 truncate tracking-wide">
-                {isTyping ? "typing..." : "Online"}
+              <span className={`text-[11px] font-black h-4 md:h-5 mt-0.5 truncate tracking-wide uppercase transition-all duration-300 ${
+                isTyping || isOnline
+                  ? "text-emerald-500 dark:text-emerald-400"
+                  : "text-slate-400 dark:text-gray-500"
+              }`}>
+                {activeChat?.isGroupChat ? (
+                  isTyping ? "typing..." : "Group Chat"
+                ) : (
+                  isTyping ? "typing..." : (isOnline ? "Online" : formatLastSeen(otherParticipant?.lastSeen))
+                )}
               </span>
             </div>
           </div>

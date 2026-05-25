@@ -32,6 +32,11 @@ const Home = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
+  const activeChatRef = useRef(activeChat);
+  useEffect(() => {
+    activeChatRef.current = activeChat;
+  }, [activeChat]);
+
   useEffect(() => {
     const fetchChatsData = async () => {
       try {
@@ -52,34 +57,71 @@ const Home = () => {
     socket.on("stop typing", () => setIsTyping(false));
 
     socket.on("message recieved", (newMessageRecieved) => {
-      if (!activeChat || activeChat._id !== newMessageRecieved.chat._id) {
-        // Here we could implement unread badge logic
+      const currentActiveChat = activeChatRef.current;
+      if (!currentActiveChat || currentActiveChat._id !== newMessageRecieved.chat._id) {
+        // Mark as Delivered on background
+        api.post(`/message/${newMessageRecieved._id}/deliver`).catch(() => {});
+        socket.emit("mark-delivered", {
+          messageId: newMessageRecieved._id,
+          chatId: newMessageRecieved.chat._id,
+          userId: user._id,
+        });
         toast.success(`New message from ${newMessageRecieved.sender.username}`);
       } else {
+        // Mark as Read/Seen on active chat
+        api.post(`/message/${currentActiveChat._id}/read`).catch(() => {});
+        socket.emit("mark-read", {
+          chatId: currentActiveChat._id,
+          userId: user._id,
+        });
         dispatch(addMessage(newMessageRecieved));
       }
     });
 
     socket.on("message edited", (editedMessage) => {
-      if (activeChat && activeChat._id === editedMessage.chat._id) {
+      const currentActiveChat = activeChatRef.current;
+      if (currentActiveChat && currentActiveChat._id === editedMessage.chat._id) {
         dispatch(updateMessageInList(editedMessage));
       }
     });
 
     socket.on("message deleted", (deletedMessage) => {
-      if (activeChat && activeChat._id === deletedMessage.chat._id) {
+      const currentActiveChat = activeChatRef.current;
+      if (currentActiveChat && currentActiveChat._id === deletedMessage.chat._id) {
         dispatch(updateMessageInList(deletedMessage));
       }
     });
 
     socket.on("message reacted", (reactedMessage) => {
-      if (activeChat && activeChat._id === reactedMessage.chat._id) {
+      const currentActiveChat = activeChatRef.current;
+      if (currentActiveChat && currentActiveChat._id === reactedMessage.chat._id) {
         dispatch(updateMessageInList(reactedMessage));
       }
     });
 
     return () => disconnectSocket();
-  }, [user, activeChat, dispatch]);
+  }, [user, dispatch]);
+
+  // Auto-mark chat as read when switching active chats
+  useEffect(() => {
+    if (activeChat && user) {
+      const markChatRead = async () => {
+        try {
+          await api.post(`/message/${activeChat._id}/read`);
+          const socket = getSocket();
+          if (socket) {
+            socket.emit("mark-read", {
+              chatId: activeChat._id,
+              userId: user._id,
+            });
+          }
+        } catch (err) {
+          console.error("Failed to mark chat as read:", err);
+        }
+      };
+      markChatRead();
+    }
+  }, [activeChat?._id, user?._id]);
 
   const fetchMessages = async (chat) => {
     if (!chat) return;

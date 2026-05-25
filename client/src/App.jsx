@@ -19,7 +19,12 @@ import CallOverlay from './components/CallOverlay/CallOverlay';
 import { Toaster } from 'react-hot-toast';
 import { initiateSocketConnection, disconnectSocket, getSocket } from './socket/socketClient';
 import api from './services/api';
-import toast from 'react-hot-toast';
+import { 
+  setOnlineUsers, 
+  updateUserPresence, 
+  markMessagesAsReadInList, 
+  markMessageAsDeliveredInList 
+} from './redux/slices/chatSlice';
 
 // Native Web Audio API synthesizer for network-independent incoming & outgoing call tones
 const SoundPlayer = {
@@ -344,12 +349,50 @@ function App() {
         cleanupCall();
       });
 
+      socket.on('online-users-list', (usersList) => {
+        dispatch(setOnlineUsers(usersList));
+      });
+
+      socket.on('presence-change', ({ userId, status, lastSeen }) => {
+        dispatch(updateUserPresence({ userId, status, lastSeen }));
+      });
+
+      socket.on('messages-read', ({ chatId, userId }) => {
+        dispatch(markMessagesAsReadInList({ chatId, userId }));
+      });
+
+      socket.on('message-delivered', ({ messageId, chatId, userId }) => {
+        dispatch(markMessageAsDeliveredInList({ messageId, userId }));
+      });
+
+      // Throttled activity pings to prevent unnecessary socket emits
+      let lastActiveTime = Date.now();
+      const sendActivePing = () => {
+        const now = Date.now();
+        if (now - lastActiveTime > 15000) {
+          socket.emit('user-active', { userId: user._id });
+          lastActiveTime = now;
+        }
+      };
+
+      window.addEventListener('focus', sendActivePing);
+      window.addEventListener('click', sendActivePing);
+      window.addEventListener('keydown', sendActivePing);
+      sendActivePing(); // Trigger immediately on active connection
+
       return () => {
         socket.off('incoming-call');
         socket.off('call-accepted');
         socket.off('ice-candidate');
         socket.off('call-declined');
         socket.off('call-ended');
+        socket.off('online-users-list');
+        socket.off('presence-change');
+        socket.off('messages-read');
+        socket.off('message-delivered');
+        window.removeEventListener('focus', sendActivePing);
+        window.removeEventListener('click', sendActivePing);
+        window.removeEventListener('keydown', sendActivePing);
         disconnectSocket();
       };
     }

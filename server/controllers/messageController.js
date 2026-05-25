@@ -7,6 +7,12 @@ import Chat from '../models/Chat.js';
 // @access  Private
 export const allMessages = async (req, res) => {
   try {
+    // Auto-mark incoming messages in this chat as read and delivered for the active user
+    await Message.updateMany(
+      { chat: req.params.chatId, sender: { $ne: req.user._id }, seenBy: { $ne: req.user._id } },
+      { $addToSet: { seenBy: req.user._id, deliveredTo: req.user._id } }
+    );
+
     const messages = await Message.find({ chat: req.params.chatId })
       .populate('sender', 'username profilePicture email')
       .populate('chat')
@@ -51,6 +57,8 @@ export const sendMessage = async (req, res) => {
     attachments: attachments || [],
     repliedTo: repliedTo || null,
     isForwarded: !!isForwarded,
+    seenBy: [req.user._id],
+    deliveredTo: [req.user._id],
   };
 
   try {
@@ -207,6 +215,38 @@ export const toggleReaction = async (req, res) => {
       });
 
     res.json(updatedMessage);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// @desc    Mark all messages in a chat as read
+// @route   POST /api/message/:chatId/read
+// @access  Private
+export const markChatAsRead = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+    await Message.updateMany(
+      { chat: chatId, sender: { $ne: req.user._id }, seenBy: { $ne: req.user._id } },
+      { $addToSet: { seenBy: req.user._id, deliveredTo: req.user._id } }
+    );
+    res.json({ success: true, message: 'All messages in chat marked as read' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// @desc    Mark a single message as delivered
+// @route   POST /api/message/:messageId/deliver
+// @access  Private
+export const markMessageAsDelivered = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    await Message.findByIdAndUpdate(
+      messageId,
+      { $addToSet: { deliveredTo: req.user._id } }
+    );
+    res.json({ success: true, message: 'Message marked as delivered' });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

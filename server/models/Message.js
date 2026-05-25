@@ -31,6 +31,7 @@ const messageSchema = new mongoose.Schema(
       }
     ],
     seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    deliveredTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     repliedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
