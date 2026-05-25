@@ -35,6 +35,13 @@ const chatSlice = createSlice({
     removeMessageFromList: (state, action) => {
       state.messages = state.messages.filter((m) => m._id !== action.payload);
     },
+    replaceOptimisticMessage: (state, action) => {
+      const { optimisticId, realMessage } = action.payload;
+      const index = state.messages.findIndex((m) => m._id === optimisticId);
+      if (index !== -1) {
+        state.messages[index] = realMessage;
+      }
+    },
     updateUserPresence: (state, action) => {
       const { userId, status, lastSeen } = action.payload;
       if (state.activeChat && state.activeChat.users) {
@@ -105,5 +112,6 @@ export const {
   updateUserPresence,
   markMessagesAsReadInList,
   markMessageAsDeliveredInList,
+  replaceOptimisticMessage,
 } = chatSlice.actions;
 export default chatSlice.reducer;

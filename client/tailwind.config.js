@@ -30,7 +30,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',

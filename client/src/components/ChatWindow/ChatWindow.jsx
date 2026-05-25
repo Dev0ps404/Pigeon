@@ -26,7 +26,7 @@ import { format } from "date-fns";
 import { getSocket } from "../../socket/socketClient";
 import api from "../../services/api";
 import toast from "react-hot-toast";
-import { addMessage, setActiveChat, updateMessageInList, removeMessageFromList } from "../../redux/slices/chatSlice";
+import { addMessage, setActiveChat, updateMessageInList, removeMessageFromList, replaceOptimisticMessage } from "../../redux/slices/chatSlice";
 import { toggleProfileSidebar } from "../../redux/slices/uiSlice";
 import EmojiPicker from "emoji-picker-react";
 import PigeonLogo from "../Logo";
@@ -510,43 +510,106 @@ const ChatWindow = ({ isTyping }) => {
     const targetChatId = activeChat?._id;
     if (!targetChatId) return;
 
+    const socket = getSocket();
+    if (!socket) return;
+
+    // Capture input states to stage optimistic updates instantly
+    const textToSend = newMessage.trim();
+    const replyContext = activeReply;
+    const fileToUpload = selectedFile;
+    const optimisticId = "opt-" + Date.now() + "-" + Math.random().toString(36).substr(2, 5);
+
     try {
       isSendingRef.current = true;
-      let uploadedAttachment = null;
-      let toastId = null;
+      let optimisticMessage = null;
 
-      if (selectedFile) {
-        toastId = toast.loading(`Uploading ${selectedFile.name}...`);
+      // 1. If sending a file, construct and render optimistic message INSTANTLY using local Blob URL preview!
+      if (fileToUpload) {
+        optimisticMessage = {
+          _id: optimisticId,
+          sender: {
+            _id: user._id,
+            username: user.username,
+            profilePicture: user.profilePicture,
+          },
+          content: textToSend,
+          chat: targetChatId,
+          createdAt: new Date().toISOString(),
+          seenBy: [user._id],
+          deliveredTo: [user._id],
+          mediaUrl: fileToUpload.previewUrl || "",
+          mediaType: fileToUpload.type,
+          messageType: fileToUpload.type,
+          attachments: [
+            {
+              id: "opt-att-" + Date.now(),
+              url: fileToUpload.previewUrl || "",
+              type: fileToUpload.type,
+              fileName: fileToUpload.name,
+              size: fileToUpload.size,
+            }
+          ],
+          isOptimistic: true,
+        };
+
+        // Dispatch optimistic message to local list immediately
+        dispatch(addMessage(optimisticMessage));
+        
+        // Immediately clean inputs so user gets instant responsive UI transition
+        clearSelectedFile();
+        setNewMessage("");
+        setActiveReply(null);
+        socket.emit("stop typing", targetChatId);
+        setTyping(false);
+      }
+
+      // 2. Perform background upload if file present
+      let uploadedAttachment = null;
+      if (fileToUpload) {
         try {
-          uploadedAttachment = await performUpload(selectedFile);
-          toast.success("Upload complete!", { id: toastId });
-          clearSelectedFile();
+          uploadedAttachment = await performUpload(fileToUpload);
         } catch (err) {
-          toast.error("Upload failed. You can click retry upload.", { id: toastId });
+          // On upload failure: remove optimistic bubble, restore staged states and notify
+          dispatch(removeMessageFromList(optimisticId));
+          setSelectedFile(fileToUpload);
+          setNewMessage(textToSend);
+          setActiveReply(replyContext);
+          setUploadFailed(true);
           isSendingRef.current = false;
-          return; // Stop early, keeping selectedFile staged with uploadFailed flag
+          return;
         }
       }
 
-      const socket = getSocket();
-      if (!socket) return;
-
+      // 3. Dispatch actual backend save payload
       const messagePayload = {
         chatId: targetChatId,
-        content: newMessage.trim(),
+        content: textToSend,
         attachments: uploadedAttachment ? [uploadedAttachment] : [],
-        repliedTo: activeReply ? activeReply._id : null,
+        repliedTo: replyContext ? replyContext._id : null,
       };
 
       const { data } = await api.post("/message", messagePayload);
 
-      socket.emit("stop typing", targetChatId);
-      setTyping(false);
-      setNewMessage("");
-      setActiveReply(null);
-      dispatch(addMessage(data));
+      if (optimisticMessage) {
+        // Replace temporary optimistic message in Redux with finalized database object
+        dispatch(replaceOptimisticMessage({ optimisticId, realMessage: data }));
+      } else {
+        // Text-only: clear input and add normal message
+        setNewMessage("");
+        setActiveReply(null);
+        socket.emit("stop typing", targetChatId);
+        setTyping(false);
+        dispatch(addMessage(data));
+      }
+
       socket.emit("new message", data);
     } catch (err) {
+      if (fileToUpload) {
+        dispatch(removeMessageFromList(optimisticId));
+        setSelectedFile(fileToUpload);
+        setNewMessage(textToSend);
+        setActiveReply(replyContext);
+      }
       toast.error("Failed to send message");
     } finally {
       isSendingRef.current = false;
