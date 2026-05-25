@@ -129,7 +129,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex-1 flex h-full bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100/70 dark:from-[#0b1020]/90 dark:via-[#0c1326]/85 dark:to-[#0a1222]/90 overflow-hidden rounded-tl-[2.5rem] shadow-[-10px_0_40px_rgba(0,0,0,0.15)] border-t border-l border-white/60 dark:border-white/5 relative z-10 backdrop-blur-2xl">
+    <div className="flex-1 flex h-full bg-gradient-to-br from-slate-50 via-sky-50/40 to-slate-100/70 dark:from-[#0b1020]/90 dark:via-[#0c1326]/85 dark:to-[#0a1222]/90 overflow-hidden shadow-[-10px_0_40px_rgba(0,0,0,0.15)] border-t border-l border-white/60 dark:border-white/5 relative z-10 backdrop-blur-2xl">
       {/* Ambient gradient orbs (light) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 dark:hidden">
         <div className="absolute -top-[15%] -left-[10%] w-[45vw] h-[45vw] bg-sky-400/15 rounded-full blur-[120px]" />
