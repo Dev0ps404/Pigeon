@@ -98,6 +98,13 @@ export const socketManager = (io) => {
       }
     });
 
+    socket.on('ice-candidate', ({ to, candidate, from }) => {
+      const targetSocket = activeUsers.get(to);
+      if (targetSocket) {
+        io.to(targetSocket).emit('ice-candidate', { candidate, from });
+      }
+    });
+
     // --- Realtime Notifications ---
     socket.on('send-notification', ({ receiverId, notification }) => {
       const receiverSocket = activeUsers.get(receiverId);
