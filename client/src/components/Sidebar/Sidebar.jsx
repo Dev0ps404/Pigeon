@@ -1,7 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme, toggleLeftNavSidebar } from "../../redux/slices/uiSlice";
-import { logout } from "../../redux/slices/authSlice";
 import {
   FiMessageSquare,
   FiUsers,
@@ -9,7 +8,6 @@ import {
   FiSettings,
   FiMoon,
   FiSun,
-  FiLogOut,
   FiBell,
   FiHome,
   FiMoreHorizontal,
@@ -20,8 +18,6 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "../../services/api";
-import toast from "react-hot-toast";
 import PigeonLogo from "../Logo";
 
 const Sidebar = () => {
@@ -32,16 +28,6 @@ const Sidebar = () => {
   const { leftNavSidebarCollapsed } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout");
-      dispatch(logout());
-      toast.success("Successfully logged out!");
-      navigate("/login");
-    } catch (error) {
-      toast.error("Logout failed");
-    }
-  };
 
   const navItems = [
     { icon: <FiMessageSquare size={18} />, label: "Chats", subLabel: "Messages", to: "/" },
@@ -194,33 +180,6 @@ const Sidebar = () => {
         })}
       </div>
 
-
-      {/* ── Logout Button ── */}
-      <div className={`mt-auto ${leftNavSidebarCollapsed ? "px-3 flex justify-center py-4" : "px-4 py-4"}`}>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleLogout}
-          className={`flex items-center justify-center border border-white/[0.08] hover:border-red-500/30 bg-[#161f38]/30 hover:bg-red-500/10 text-slate-300 hover:text-red-400 rounded-xl transition-all duration-200 group relative ${
-            leftNavSidebarCollapsed
-              ? "w-11 h-11"
-              : "w-full py-2.5 px-4 gap-2 text-sm font-semibold shadow-sm"
-          }`}
-          title="Logout"
-        >
-          <FiLogOut
-            size={18}
-            className="transition-transform duration-300 group-hover:translate-x-0.5"
-          />
-          {!leftNavSidebarCollapsed && <span className="text-[13px] font-semibold">Logout</span>}
-
-          {leftNavSidebarCollapsed && (
-            <div className="absolute left-full ml-4 px-3 py-1.5 bg-[#111827] border border-white/10 text-white text-xs font-bold rounded-lg shadow-2xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 whitespace-nowrap z-50 backdrop-blur-md">
-              Logout
-            </div>
-          )}
-        </motion.button>
-      </div>
     </motion.aside>
   );
 };
