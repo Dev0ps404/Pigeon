@@ -292,7 +292,10 @@ const MessageBubble = ({
     if (message.isDeleted) {
       return (
         <p className="text-[13px] leading-relaxed italic text-gray-400 dark:text-slate-500 flex items-center gap-1.5 select-none">
-          <FiTrash2 size={13} className="shrink-0 text-gray-400 dark:text-slate-500" />
+          <FiTrash2
+            size={13}
+            className="shrink-0 text-gray-400 dark:text-slate-500"
+          />
           This message was deleted
         </p>
       );
@@ -343,14 +346,19 @@ const MessageBubble = ({
         {/* Replied Quoted Message Box */}
         {message.repliedTo && (
           <div
-            onClick={() => scrollToMessage(message.repliedTo._id || message.repliedTo)}
+            onClick={() =>
+              scrollToMessage(message.repliedTo._id || message.repliedTo)
+            }
             className="mb-1.5 p-2 rounded-xl border-l-3 border-sky-400 dark:border-blue-500 bg-slate-950/20 dark:bg-white/5 cursor-pointer text-left select-none overflow-hidden max-w-xs truncate w-full group/reply hover:bg-slate-950/30 transition-colors"
           >
             <p className="text-[10px] font-extrabold text-sky-400 dark:text-blue-400 uppercase tracking-wider mb-0.5">
               Replying to {message.repliedTo.sender?.username || "User"}
             </p>
             <p className="text-[11.5px] text-slate-500 dark:text-slate-350 truncate">
-              {message.repliedTo.content || (message.repliedTo.attachments?.length > 0 ? "Attachment 📎" : "Attachment")}
+              {message.repliedTo.content ||
+                (message.repliedTo.attachments?.length > 0
+                  ? "Attachment 📎"
+                  : "Attachment")}
             </p>
           </div>
         )}
@@ -384,7 +392,9 @@ const MessageBubble = ({
         <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center text-sky-500 dark:text-blue-400 shrink-0 pointer-events-none transition-all">
           <FiCornerUpLeft
             size={18}
-            className={dragX > 55 ? "scale-125 stroke-[3.5]" : "scale-100 stroke-[2]"}
+            className={
+              dragX > 55 ? "scale-125 stroke-[3.5]" : "scale-100 stroke-[2]"
+            }
           />
         </div>
       )}
@@ -407,7 +417,7 @@ const MessageBubble = ({
         {isImageOrVideoOnly ? (
           <div className="relative">
             {renderMedia()}
-            
+
             {/* Out-of-bubble action trigger */}
             {!message.isDeleted && (
               <button
@@ -564,13 +574,13 @@ const MessageBubble = ({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className={`absolute z-40 bg-[#12192c]/95 dark:bg-[#0c1224]/95 border border-white/[0.06] backdrop-blur-xl p-1.5 rounded-2xl shadow-2xl flex flex-col min-w-[170px] select-none text-left ${
+              className={`absolute z-40 bg-slate-950/95 dark:bg-[#0b1220]/95 border border-white/[0.1] backdrop-blur-xl p-1.5 rounded-2xl shadow-2xl flex flex-col min-w-[170px] select-none text-left ${
                 isMine ? "right-0 top-12" : "left-0 top-12"
               }`}
             >
               {/* Emoji quick reaction dock */}
               {showEmojiSelector && (
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-1.5 mb-1.5 px-1 pt-1 gap-1">
+                <div className="flex items-center justify-between border-b border-white/[0.1] pb-1.5 mb-1.5 px-1 pt-1 gap-1">
                   {quickEmojis.map((emoji) => (
                     <button
                       key={emoji}
@@ -591,9 +601,9 @@ const MessageBubble = ({
                   onReply(message);
                   setShowMenu(false);
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-350 dark:text-gray-300 hover:text-white hover:bg-white/5 rounded-xl cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors"
               >
-                <FiCornerUpLeft size={13} className="text-slate-450" />
+                <FiCornerUpLeft size={13} className="text-slate-300" />
                 <span>Reply</span>
               </button>
 
@@ -605,9 +615,9 @@ const MessageBubble = ({
                     setEditText(message.content || "");
                     setShowMenu(false);
                   }}
-                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-350 dark:text-gray-300 hover:text-white hover:bg-white/5 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors"
                 >
-                  <FiEdit3 size={13} className="text-slate-450" />
+                  <FiEdit3 size={13} className="text-slate-300" />
                   <span>Edit Message</span>
                 </button>
               )}
@@ -618,22 +628,22 @@ const MessageBubble = ({
                   onForward(message);
                   setShowMenu(false);
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-350 dark:text-gray-300 hover:text-white hover:bg-white/5 rounded-xl cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors"
               >
-                <FiShare2 size={13} className="text-slate-450" />
+                <FiShare2 size={13} className="text-slate-300" />
                 <span>Forward</span>
               </button>
 
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-350 dark:text-gray-300 hover:text-white hover:bg-white/5 rounded-xl cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors"
               >
-                <FiCopy size={13} className="text-slate-450" />
+                <FiCopy size={13} className="text-slate-300" />
                 <span>Copy Text</span>
               </button>
 
-              <div className="h-px bg-white/[0.06] my-1"></div>
+              <div className="h-px bg-white/[0.1] my-1"></div>
 
               {isMine && !message.isDeleted && (
                 <button
@@ -642,7 +652,7 @@ const MessageBubble = ({
                     onDelete(message, "everyone");
                     setShowMenu(false);
                   }}
-                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors"
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-300 hover:text-rose-200 hover:bg-rose-500/15 rounded-xl cursor-pointer transition-colors"
                 >
                   <FiTrash2 size={13} />
                   <span>Delete for Everyone</span>
@@ -655,7 +665,7 @@ const MessageBubble = ({
                   onDelete(message, "me");
                   setShowMenu(false);
                 }}
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-red-450 hover:text-red-300 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors"
+                className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-rose-300 hover:text-rose-200 hover:bg-rose-500/15 rounded-xl cursor-pointer transition-colors"
               >
                 <FiTrash2 size={13} />
                 <span>Delete for Me</span>
