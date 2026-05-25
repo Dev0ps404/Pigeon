@@ -2472,7 +2472,7 @@ const Settings = () => {
           </div>
 
           {/* Right Side: High-Fidelity Vertical Sub-Navigation Sidebar Panel (Desktop Only) */}
-          <div className="hidden lg:flex flex-col w-76 shrink-0 bg-white dark:bg-[#090d16] border-l border-gray-150 dark:border-white/[0.04] p-5 overflow-y-auto custom-scrollbar space-y-2 select-none relative">
+          <div className="hidden lg:flex flex-col w-[270px] min-w-[270px] max-w-[270px] shrink-0 bg-white dark:bg-[#090d16] border-l border-gray-150 dark:border-white/[0.04] p-5 overflow-y-auto custom-scrollbar space-y-2 select-none relative">
             {/* Ambient Background Lights */}
             <div className="absolute bottom-[-50px] right-[-5%] w-48 h-48 bg-gradient-to-tr from-primary-500/10 to-primary-600/10 dark:from-primary-500/5 dark:to-primary-600/5 rounded-full blur-3xl pointer-events-none" />
 
