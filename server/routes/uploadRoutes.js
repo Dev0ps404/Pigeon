@@ -54,7 +54,12 @@ router.post('/', upload.single('file'), async (req, res) => {
       else if (type === 'video') resourceType = 'video';
       else resourceType = 'raw';
 
-      secureUrl = await uploadToCloudinary(fileBase64, resourceType);
+      const uploadResult = await uploadToCloudinary(fileBase64, resourceType);
+      if (uploadResult.startsWith('/uploads/')) {
+        secureUrl = `${req.protocol}://${req.get('host')}${uploadResult}`;
+      } else {
+        secureUrl = uploadResult;
+      }
       publicId = 'cloudinary';
     } else {
       // Local development fallback: Save file to physical local storage folder

@@ -131,6 +131,7 @@ const ChatWindow = ({ isTyping }) => {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadFailed, setUploadFailed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
   const [showScrollBottom, setShowScrollBottom] = useState(false);
@@ -155,6 +156,16 @@ const ChatWindow = ({ isTyping }) => {
 
   const isSendingRef = useRef(false);
 
+  // Clean up input states and reset upload parameters when switching chats to prevent cross-chat leaks
+  useEffect(() => {
+    clearSelectedFile();
+    setNewMessage("");
+    setActiveReply(null);
+    setUploading(false);
+    setUploadFailed(false);
+    setUploadProgress(0);
+  }, [activeChat?._id]);
+
   // Clean up selectedFile previewUrl when changing selectedFile or unmounting to prevent leaks/stale caching
   useEffect(() => {
     let currentPreviewUrl = selectedFile?.previewUrl;
@@ -167,6 +178,7 @@ const ChatWindow = ({ isTyping }) => {
 
   const clearSelectedFile = () => {
     setSelectedFile(null);
+    setUploadFailed(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -209,6 +221,14 @@ const ChatWindow = ({ isTyping }) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File is too large. Maximum size limit is 20MB.");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
+
     let mediaType = "file";
     if (file.type.startsWith("image/")) mediaType = "image";
     else if (file.type.startsWith("video/")) mediaType = "video";
@@ -249,6 +269,11 @@ const ChatWindow = ({ isTyping }) => {
 
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File is too large. Maximum size limit is 20MB.");
+      return;
+    }
 
     let mediaType = "file";
     if (file.type.startsWith("image/")) mediaType = "image";
@@ -410,12 +435,48 @@ const ChatWindow = ({ isTyping }) => {
     }, timerLength);
   };
 
+  const performUpload = async (fileObj) => {
+    setUploading(true);
+    setUploadFailed(false);
+    setUploadProgress(0);
+
+    const formData = new FormData();
+    formData.append("file", fileObj.file);
+
+    try {
+      const { data } = await api.post("/chat/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total,
+          );
+          setUploadProgress(percentCompleted);
+        },
+      });
+
+      return {
+        url: data.url,
+        type: fileObj.type,
+        fileName: fileObj.name,
+        size: fileObj.size,
+      };
+    } catch (err) {
+      setUploadFailed(true);
+      setUploading(false);
+      throw err;
+    }
+  };
+
   const handleSend = async (e) => {
-    if (e.type === "keydown" && e.key !== "Enter") return;
+    if (e && e.type === "keydown" && e.key !== "Enter") return;
     if (isSendingRef.current) return;
 
     const hasContent = newMessage.trim().length > 0;
     if (!hasContent && !selectedFile) return;
+
+    // Capture the target chatId BEFORE upload starts to prevent switched-chat race conditions
+    const targetChatId = activeChat?._id;
+    if (!targetChatId) return;
 
     try {
       isSendingRef.current = true;
@@ -424,39 +485,22 @@ const ChatWindow = ({ isTyping }) => {
 
       if (selectedFile) {
         toastId = toast.loading(`Uploading ${selectedFile.name}...`);
-        setUploading(true);
-        setUploadProgress(0);
-
-        const formData = new FormData();
-        formData.append("file", selectedFile.file);
-
-        const { data } = await api.post("/chat/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total,
-            );
-            setUploadProgress(percentCompleted);
-          },
-        });
-
-        uploadedAttachment = {
-          url: data.url,
-          type: selectedFile.type,
-          fileName: selectedFile.name,
-        };
-
-        toast.success("Upload complete!", { id: toastId });
-        setUploading(false);
-        clearSelectedFile();
+        try {
+          uploadedAttachment = await performUpload(selectedFile);
+          toast.success("Upload complete!", { id: toastId });
+          clearSelectedFile();
+        } catch (err) {
+          toast.error("Upload failed. You can click retry upload.", { id: toastId });
+          isSendingRef.current = false;
+          return; // Stop early, keeping selectedFile staged with uploadFailed flag
+        }
       }
 
       const socket = getSocket();
-      const currentActiveChatId = activeChatIdRef.current;
-      if (!socket || !currentActiveChatId) return;
+      if (!socket) return;
 
       const messagePayload = {
-        chatId: currentActiveChatId,
+        chatId: targetChatId,
         content: newMessage.trim(),
         attachments: uploadedAttachment ? [uploadedAttachment] : [],
         repliedTo: activeReply ? activeReply._id : null,
@@ -464,7 +508,7 @@ const ChatWindow = ({ isTyping }) => {
 
       const { data } = await api.post("/message", messagePayload);
 
-      socket.emit("stop typing", currentActiveChatId);
+      socket.emit("stop typing", targetChatId);
       setTyping(false);
       setNewMessage("");
       setActiveReply(null);
@@ -474,7 +518,6 @@ const ChatWindow = ({ isTyping }) => {
       toast.error("Failed to send message");
     } finally {
       isSendingRef.current = false;
-      setUploading(false);
     }
   };
 
@@ -811,57 +854,87 @@ const ChatWindow = ({ isTyping }) => {
           )}
 
           {selectedFile && (
-            <div className="mb-3 bg-slate-50/90 dark:bg-[#0a0f1c]/80 backdrop-blur-md border border-slate-200/70 dark:border-white/5 rounded-2xl p-4 flex flex-col shadow-lg relative animate-fade-in text-left">
+            <div className="mb-3 bg-slate-50/90 dark:bg-[#0b1020]/90 backdrop-blur-xl border border-slate-200/70 dark:border-white/10 rounded-3xl p-4 flex flex-col shadow-2xl relative animate-fade-in text-left">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-4 min-w-0">
                   {selectedFile.previewUrl ? (
                     selectedFile.type === "image" ? (
-                      <img
-                        referrerPolicy="no-referrer"
-                        src={selectedFile.previewUrl}
-                        alt="Preview"
-                        className="w-14 h-14 object-cover rounded-xl border border-slate-200/70 dark:border-white/10 shrink-0"
-                      />
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shadow-md shrink-0">
+                        <img
+                          referrerPolicy="no-referrer"
+                          src={selectedFile.previewUrl}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                        {uploading && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <span className="text-[11px] font-black text-white">{uploadProgress}%</span>
+                          </div>
+                        )}
+                      </div>
                     ) : (
-                      <video
-                        src={selectedFile.previewUrl}
-                        className="w-14 h-14 object-cover rounded-xl border border-slate-200/70 dark:border-white/10 shrink-0 bg-black"
-                      />
+                      <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shadow-md shrink-0 bg-black">
+                        <video
+                          src={selectedFile.previewUrl}
+                          className="w-full h-full object-cover"
+                        />
+                        {uploading && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <span className="text-[11px] font-black text-white">{uploadProgress}%</span>
+                          </div>
+                        )}
+                      </div>
                     )
                   ) : (
-                    <div className="w-14 h-14 bg-sky-500/10 text-sky-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
-                      <FiFile size={24} />
+                    <div className="w-16 h-16 bg-sky-500/10 text-sky-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shrink-0 border border-sky-500/10 shadow-inner">
+                      <FiFile size={26} />
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate pr-2">
+                    <p className="text-sm font-extrabold text-slate-900 dark:text-white truncate pr-2">
                       {selectedFile.name}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase mt-0.5">
-                      {(selectedFile.size / 1024).toFixed(1)} KB •{" "}
-                      {selectedFile.type}
+                    <p className="text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase mt-1 tracking-wider">
+                      {(selectedFile.size / 1024).toFixed(1)} KB • {selectedFile.type}
                     </p>
+                    {uploadFailed && (
+                      <span className="text-[9px] font-extrabold text-rose-500 uppercase tracking-widest block mt-1 animate-pulse">
+                        UPLOAD INTERRUPTED • RETRY READY
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <button
-                  onClick={clearSelectedFile}
-                  disabled={uploading}
-                  className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/70 dark:border-white/5 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-50 shrink-0"
-                >
-                  <FiX size={16} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {uploadFailed && (
+                    <button
+                      type="button"
+                      onClick={() => handleSend({ type: "click" })}
+                      className="px-3.5 py-1.5 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white rounded-xl text-[10.5px] font-black uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer"
+                    >
+                      Retry Upload
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={clearSelectedFile}
+                    disabled={uploading}
+                    className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/70 dark:border-white/5 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-50 shrink-0 cursor-pointer"
+                  >
+                    <FiX size={16} />
+                  </button>
+                </div>
               </div>
 
               {uploading && (
-                <div className="mt-3">
-                  <div className="flex justify-between text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase mb-1">
-                    <span>Uploading transmission...</span>
+                <div className="mt-4">
+                  <div className="flex justify-between text-[9px] font-extrabold text-slate-500 dark:text-gray-500 uppercase tracking-widest mb-1.5">
+                    <span>Uploading secure attachment...</span>
                     <span>{uploadProgress}%</span>
                   </div>
-                  <div className="w-full bg-slate-200/70 dark:bg-white/5 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200/70 dark:bg-white/5 h-2 rounded-full overflow-hidden">
                     <div
-                      className="bg-gradient-to-r from-sky-500 via-blue-500 to-emerald-500 h-full transition-all duration-200"
+                      className="bg-gradient-to-r from-sky-500 via-blue-500 to-emerald-500 h-full transition-all duration-300"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>

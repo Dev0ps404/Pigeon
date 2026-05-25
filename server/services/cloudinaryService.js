@@ -68,8 +68,7 @@ export const uploadToCloudinary = async (fileStr, resourceType = 'auto') => {
 
         await fs.promises.writeFile(filePath, buffer);
 
-        const port = process.env.PORT || 5001;
-        return `http://localhost:${port}/uploads/${safeFileName}`;
+        return `/uploads/${safeFileName}`;
       } else {
         throw new Error('Invalid base64 string format');
       }
@@ -119,8 +118,7 @@ export const uploadToCloudinary = async (fileStr, resourceType = 'auto') => {
 
         await fs.promises.writeFile(filePath, buffer);
 
-        const port = process.env.PORT || 5001;
-        return `http://localhost:${port}/uploads/${safeFileName}`;
+        return `/uploads/${safeFileName}`;
       }
     } catch (fallbackErr) {
       console.error('Local fallback write failed:', fallbackErr);
