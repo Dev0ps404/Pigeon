@@ -568,100 +568,14 @@ const Settings = () => {
       {/* FULL VIEWPORT CONTAINER: Single-Pane Desktop-First Horizontal Tabs Layout */}
       <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-white dark:bg-[#0b0f19]">
         
-        {/* Premium Header & Tabs Area */}
-        <div className="p-6 pb-4 bg-transparent select-none relative">
+        {/* Premium Header & Tabs Area - Mobile/Tablet Only */}
+        <div className="lg:hidden p-6 pb-4 bg-transparent select-none relative">
           {/* Floating Background Glows */}
           <div className="absolute top-[-50px] left-[10%] w-72 h-72 bg-gradient-to-tr from-primary-500/10 to-primary-600/10 dark:from-primary-500/5 dark:to-primary-600/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute top-[-20px] right-[20%] w-60 h-60 bg-gradient-to-tr from-purple-500/10 to-pink-500/10 dark:from-purple-500/5 dark:to-pink-500/5 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Premium Glassmorphism Header Card */}
-          <div className="relative bg-white/60 dark:bg-slate-900/40 backdrop-blur-xl border border-white/30 dark:border-white/5 shadow-2xl rounded-3xl p-6 overflow-hidden mb-6">
-            {/* Inner glow accent */}
-            <div className="absolute -inset-px bg-gradient-to-r from-primary-500/10 via-transparent to-primary-600/10 rounded-3xl pointer-events-none" />
-            
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
-              <div className="flex items-center gap-4">
-                {/* Animated settings cog icon */}
-                <motion.div 
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary-600 to-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-500/20 cursor-pointer"
-                >
-                  <FiSettings size={22} />
-                </motion.div>
-
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-                      Settings
-                    </h1>
-                    
-                    {/* Animated Pulsing Version Badge */}
-                    <motion.span 
-                      animate={{ 
-                        boxShadow: ["0px 0px 4px rgba(var(--primary-500), 0.2)", "0px 0px 12px rgba(var(--primary-500), 0.4)", "0px 0px 4px rgba(var(--primary-500), 0.2)"] 
-                      }}
-                      transition={{ repeat: Infinity, duration: 3 }}
-                      className="text-[10px] px-3 py-1 font-black text-primary-600 dark:text-primary-400 bg-primary-50/50 dark:bg-primary-950/40 rounded-xl border border-primary-100/50 dark:border-primary-900/30 uppercase tracking-widest shadow-sm flex items-center gap-1.5"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary-500 dark:bg-primary-400 animate-pulse" />
-                      v2.4.0
-                    </motion.span>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 max-w-lg font-medium leading-relaxed">
-                    Customize your Pigeon communication terminal credentials, security, notifications, and ambient AI.
-                  </p>
-                </div>
-              </div>
-
-              {/* Right side: Search + Profile Quick Access */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                {/* Floating Glass Search Input */}
-                <div className="relative flex items-center w-full sm:w-64 md:w-72 group">
-                  <input 
-                    type="text"
-                    placeholder="Search setting options..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full text-xs pl-10 pr-8 py-3 rounded-2xl border border-gray-150 dark:border-slate-800 bg-white/80 dark:bg-[#070b13]/80 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500/30 transition-all font-medium placeholder-gray-400 shadow-inner"
-                  />
-                  <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-primary-500 transition-colors pointer-events-none" />
-                  {searchQuery && (
-                    <button 
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-650 dark:hover:text-gray-250 transition-colors"
-                    >
-                      <FiX size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Profile Quick Access */}
-                <motion.div 
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => { setActiveTab('account'); setSearchQuery(''); }}
-                  className="flex items-center gap-3 pl-3 pr-4 py-2 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-gray-150 dark:border-slate-855 rounded-2xl shadow-sm cursor-pointer select-none shrink-0"
-                >
-                  {renderAvatar("w-8 h-8", "text-[10px] font-black")}
-                  <div className="text-left">
-                    <div className="text-[11px] font-bold text-gray-850 dark:text-white leading-none">
-                      {username || user?.username || 'Pigeon User'}
-                    </div>
-                    <div className="text-[9px] text-gray-450 font-semibold mt-0.5 leading-none">
-                      {email || user?.email || 'user@pigeon.im'}
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Subtle bottom glow bar */}
-            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary-500 to-primary-600 opacity-60 pointer-events-none" />
-          </div>
-
           {/* Premium Navigation Tabs with Framer Motion Sliding Indicator (Mobile/Tablet Only) */}
-          <div className="flex lg:hidden gap-2.5 overflow-x-auto whitespace-nowrap scrollbar-none py-2 relative z-10 px-0.5">
+          <div className="flex gap-2.5 overflow-x-auto whitespace-nowrap scrollbar-none py-2 relative z-10 px-0.5">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id && !searchQuery;
@@ -675,7 +589,7 @@ const Settings = () => {
                   className={`relative flex items-center gap-3 px-5 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 cursor-pointer select-none shrink-0 group ${
                     isActive 
                       ? 'text-white' 
-                      : 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-gray-150 dark:border-slate-850 text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 hover:border-gray-200 dark:hover:border-slate-800 shadow-sm'
+                      : 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-gray-150 dark:border-slate-855 text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 hover:border-gray-200 dark:hover:border-slate-800 shadow-sm'
                   }`}
                 >
                   {/* Framer Motion sliding background */}
