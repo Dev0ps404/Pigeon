@@ -338,7 +338,7 @@ const ChatWindow = ({ isTyping }) => {
 
         const toastId = toast.loading("Sending voice message...");
         try {
-          const { data } = await api.post("/chat/upload", formData, {
+          const { data } = await api.post("/upload", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
 
@@ -444,7 +444,7 @@ const ChatWindow = ({ isTyping }) => {
     formData.append("file", fileObj.file);
 
     try {
-      const { data } = await api.post("/chat/upload", formData, {
+      const { data } = await api.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
