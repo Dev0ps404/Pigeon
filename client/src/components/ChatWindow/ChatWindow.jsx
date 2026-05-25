@@ -25,7 +25,7 @@ import MessageBubble from "../MessageBubble/MessageBubble";
 import { getSocket } from "../../socket/socketClient";
 import api from "../../services/api";
 import toast from "react-hot-toast";
-import { addMessage, setActiveChat } from "../../redux/slices/chatSlice";
+import { addMessage, setActiveChat, updateMessageInList, removeMessageFromList } from "../../redux/slices/chatSlice";
 import { toggleProfileSidebar } from "../../redux/slices/uiSlice";
 import EmojiPicker from "emoji-picker-react";
 import PigeonLogo from "../Logo";
@@ -35,6 +35,93 @@ const ChatWindow = ({ isTyping }) => {
   const { user } = useSelector((state) => state.auth);
   const { activeChat, messages } = useSelector((state) => state.chat);
   const { theme } = useSelector((state) => state.ui);
+  const { chats } = useSelector((state) => state.chat);
+
+  const [activeReply, setActiveReply] = useState(null);
+  const [showForwardModal, setShowForwardModal] = useState(false);
+  const [forwardMessage, setForwardMessage] = useState(null);
+
+  const handleReplyTrigger = (message) => {
+    setActiveReply(message);
+  };
+
+  const handleEditSubmit = async (message, newContent) => {
+    try {
+      const { data } = await api.put(`/message/${message._id}`, { content: newContent });
+      dispatch(updateMessageInList(data));
+      const socket = getSocket();
+      if (socket) {
+        socket.emit("edit message", data);
+      }
+      toast.success("Message edited!");
+    } catch (err) {
+      toast.error("Failed to edit message");
+    }
+  };
+
+  const handleDeleteSubmit = async (message, deleteType) => {
+    try {
+      if (deleteType === "everyone") {
+        const { data } = await api.delete(`/message/${message._id}`);
+        dispatch(updateMessageInList(data));
+        const socket = getSocket();
+        if (socket) {
+          socket.emit("delete message", data);
+        }
+        toast.success("Deleted message for everyone");
+      } else {
+        // Delete for Me
+        await api.post(`/message/${message._id}/delete-me`);
+        dispatch(removeMessageFromList(message._id));
+        toast.success("Deleted message locally");
+      }
+    } catch (err) {
+      toast.error("Failed to delete message");
+    }
+  };
+
+  const handleReactSubmit = async (message, emoji) => {
+    try {
+      const { data } = await api.post(`/message/${message._id}/react`, { emoji });
+      dispatch(updateMessageInList(data));
+      const socket = getSocket();
+      if (socket) {
+        socket.emit("message reaction", data);
+      }
+    } catch (err) {
+      toast.error("Failed to toggle reaction");
+    }
+  };
+
+  const handleForwardTrigger = (message) => {
+    setForwardMessage(message);
+    setShowForwardModal(true);
+  };
+
+  const handleForwardConfirm = async (chatId) => {
+    if (!forwardMessage) return;
+    try {
+      const messagePayload = {
+        chatId,
+        content: forwardMessage.content || "",
+        attachments: forwardMessage.attachments || [],
+        isForwarded: true,
+      };
+      
+      const { data } = await api.post("/message", messagePayload);
+      
+      const socket = getSocket();
+      if (socket) {
+        socket.emit("new message", data);
+      }
+      
+      toast.success("Message forwarded!");
+      setShowForwardModal(false);
+      setForwardMessage(null);
+    } catch (err) {
+      toast.error("Failed to forward message");
+    }
+  };
 
   const [newMessage, setNewMessage] = useState("");
   const [typing, setTyping] = useState(false);
@@ -372,6 +459,7 @@ const ChatWindow = ({ isTyping }) => {
         chatId: currentActiveChatId,
         content: newMessage.trim(),
         attachments: uploadedAttachment ? [uploadedAttachment] : [],
+        repliedTo: activeReply ? activeReply._id : null,
       };
 
       const { data } = await api.post("/message", messagePayload);
@@ -379,6 +467,7 @@ const ChatWindow = ({ isTyping }) => {
       socket.emit("stop typing", currentActiveChatId);
       setTyping(false);
       setNewMessage("");
+      setActiveReply(null);
       dispatch(addMessage(data));
       socket.emit("new message", data);
     } catch (err) {
@@ -609,9 +698,20 @@ const ChatWindow = ({ isTyping }) => {
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto p-6 md:p-8 flex flex-col custom-scrollbar relative z-10"
       >
-        {messages.map((m) => (
-          <MessageBubble key={m._id} message={m} />
-        ))}
+        {messages.map((m) => {
+          if (m.deletedFor && m.deletedFor.includes(user._id)) return null;
+          return (
+            <MessageBubble
+              key={m._id}
+              message={m}
+              onReply={handleReplyTrigger}
+              onEdit={handleEditSubmit}
+              onDelete={handleDeleteSubmit}
+              onReact={handleReactSubmit}
+              onForward={handleForwardTrigger}
+            />
+          );
+        })}
         {isTyping && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -658,6 +758,34 @@ const ChatWindow = ({ isTyping }) => {
 
       {/* Floating Glassmorphic Input capsule */}
       <div className="p-4 md:p-6 bg-transparent relative z-10 max-w-5xl w-full mx-auto pb-6">
+        {/* Quoted Replied message preview */}
+        <AnimatePresence>
+          {activeReply && (
+            <motion.div
+              initial={{ opacity: 0, y: 15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 15, scale: 0.98 }}
+              className="mb-3 bg-white/90 dark:bg-[#111827]/70 backdrop-blur-xl border border-slate-200/70 dark:border-white/5 rounded-2xl p-4 flex items-center justify-between shadow-xl relative animate-fade-in text-left select-none"
+            >
+              <div className="border-l-3 border-sky-400 dark:border-blue-500 pl-3 overflow-hidden min-w-0">
+                <p className="text-[10px] font-extrabold text-sky-400 dark:text-blue-400 uppercase tracking-widest">
+                  Replying to {activeReply.sender?.username}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-gray-400 truncate mt-1.5 font-medium leading-relaxed">
+                  {activeReply.content || (activeReply.attachments?.length > 0 ? "Shared Attachment 📎" : "Attachment")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveReply(null)}
+                className="w-7 h-7 rounded-full flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/70 dark:border-white/5 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors shrink-0 cursor-pointer"
+              >
+                <FiX size={14} />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="bg-white/90 dark:bg-[#111827]/40 border border-slate-200/70 dark:border-white/5 backdrop-blur-xl rounded-[2.2rem] p-3 shadow-2xl transition-all focus-within:ring-2 focus-within:ring-sky-400/30 relative">
           <input
             type="file"
@@ -842,6 +970,103 @@ const ChatWindow = ({ isTyping }) => {
           </div>
         </div>
       </div>
+
+      {/* ── HIGH-FIDELITY GLASSMORPHIC FORWARD MODAL DIALOG ── */}
+      <AnimatePresence>
+        {showForwardModal && (
+          <div className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              className="bg-white dark:bg-[#0c1224] border border-gray-150 dark:border-white/[0.06] shadow-2xl rounded-[2.5rem] p-6 max-w-[380px] w-full space-y-5 text-left max-h-[80vh] flex flex-col overflow-hidden"
+            >
+              <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/[0.06] pb-3 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                    <FiShare2 size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-sm text-gray-900 dark:text-white tracking-tight">
+                      Forward Message
+                    </h3>
+                    <p className="text-[10px] text-gray-450 font-extrabold uppercase mt-0.5 tracking-wider">
+                      Select target contact
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowForwardModal(false)}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/70 dark:border-white/5 text-slate-500 dark:text-gray-400 flex items-center justify-center cursor-pointer transition-colors"
+                >
+                  <FiX size={16} />
+                </button>
+              </div>
+
+              {/* Scrollable list of Chats */}
+              <div className="flex-grow overflow-y-auto custom-scrollbar space-y-2.5 pr-1 py-1">
+                {chats && chats.length > 0 ? (
+                  chats.map((chat) => {
+                    const otherUser = chat.isGroupChat
+                      ? null
+                      : chat.users.find((u) => u._id !== user._id);
+                    const targetName = chat.isGroupChat
+                      ? chat.chatName
+                      : otherUser?.username || "Pigeon User";
+                    const targetPic = chat.isGroupChat
+                      ? null
+                      : otherUser?.profilePicture;
+
+                    return (
+                      <div
+                        key={chat._id}
+                        onClick={() => handleForwardConfirm(chat._id)}
+                        className="flex items-center justify-between p-3 rounded-2xl border border-slate-100 dark:border-white/[0.03] bg-slate-50/50 dark:bg-white/[0.02] hover:bg-slate-100/85 dark:hover:bg-white/5 cursor-pointer transition-colors shadow-sm select-none"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          {targetPic ? (
+                            <img
+                              referrerPolicy="no-referrer"
+                              src={targetPic}
+                              alt="Avatar"
+                              className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-white/5"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 bg-gradient-to-tr from-sky-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-sm border border-slate-200 dark:border-white/5 uppercase">
+                              {targetName[0]}
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-slate-800 dark:text-white truncate">
+                              {targetName}
+                            </p>
+                            <p className="text-[9.5px] font-semibold text-slate-450 dark:text-gray-500 uppercase tracking-wide mt-0.5">
+                              {chat.isGroupChat ? "Group Chat" : "Direct Message"}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white rounded-xl text-[10.5px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer shrink-0 shadow-sm shadow-sky-500/10"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      No active chats to forward to.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

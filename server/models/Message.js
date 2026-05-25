@@ -32,6 +32,16 @@ const messageSchema = new mongoose.Schema(
     ],
     seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     repliedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
+    isEdited: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false },
+    deletedFor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    reactions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        emoji: { type: String },
+      }
+    ],
+    isForwarded: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

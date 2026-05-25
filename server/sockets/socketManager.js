@@ -36,6 +36,35 @@ export const socketManager = (io) => {
       });
     });
 
+    socket.on('edit message', (editedMessage) => {
+      const chat = editedMessage.chat;
+      if (!chat || !chat.users) return;
+      chat.users.forEach((user) => {
+        const userId = typeof user === 'object' ? user._id : user;
+        if (userId == editedMessage.sender._id) return;
+        socket.in(userId).emit('message edited', editedMessage);
+      });
+    });
+
+    socket.on('delete message', (deletedMessage) => {
+      const chat = deletedMessage.chat;
+      if (!chat || !chat.users) return;
+      chat.users.forEach((user) => {
+        const userId = typeof user === 'object' ? user._id : user;
+        if (userId == deletedMessage.sender._id) return;
+        socket.in(userId).emit('message deleted', deletedMessage);
+      });
+    });
+
+    socket.on('message reaction', (reactedMessage) => {
+      const chat = reactedMessage.chat;
+      if (!chat || !chat.users) return;
+      chat.users.forEach((user) => {
+        const userId = typeof user === 'object' ? user._id : user;
+        socket.in(userId).emit('message reacted', reactedMessage);
+      });
+    });
+
     // --- WebRTC Signaling Events ---
     socket.on('call-user', ({ userToCall, signalData, from, callerName }) => {
       const receiverSocket = activeUsers.get(userToCall);

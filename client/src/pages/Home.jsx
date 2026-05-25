@@ -5,7 +5,7 @@ import {
   disconnectSocket,
   getSocket,
 } from "../socket/socketClient";
-import { setChats, addMessage, setMessages } from "../redux/slices/chatSlice";
+import { setChats, addMessage, setMessages, updateMessageInList } from "../redux/slices/chatSlice";
 import {
   setMessagesSidebarWidth,
   setProfileSidebarWidth,
@@ -57,6 +57,24 @@ const Home = () => {
         toast.success(`New message from ${newMessageRecieved.sender.username}`);
       } else {
         dispatch(addMessage(newMessageRecieved));
+      }
+    });
+
+    socket.on("message edited", (editedMessage) => {
+      if (activeChat && activeChat._id === editedMessage.chat._id) {
+        dispatch(updateMessageInList(editedMessage));
+      }
+    });
+
+    socket.on("message deleted", (deletedMessage) => {
+      if (activeChat && activeChat._id === deletedMessage.chat._id) {
+        dispatch(updateMessageInList(deletedMessage));
+      }
+    });
+
+    socket.on("message reacted", (reactedMessage) => {
+      if (activeChat && activeChat._id === reactedMessage.chat._id) {
+        dispatch(updateMessageInList(reactedMessage));
       }
     });
 

@@ -227,3 +227,23 @@
 .animate-blob-slowest {
   animation: floatBlob 24s infinite ease-in-out;
 }
+
+/* Quoted message click visual highlight pulse */
+@keyframes messageHighlightPulse {
+  0% {
+    background-color: rgba(59, 130, 246, 0.35) !important;
+    box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    background-color: transparent !important;
+    box-shadow: 0 0 0 0px rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-message-highlight {
+  animation: messageHighlightPulse 2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}

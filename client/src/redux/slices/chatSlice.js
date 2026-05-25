@@ -26,8 +26,25 @@ const chatSlice = createSlice({
     setOnlineUsers: (state, action) => {
       state.onlineUsers = action.payload;
     },
+    updateMessageInList: (state, action) => {
+      const index = state.messages.findIndex((m) => m._id === action.payload._id);
+      if (index !== -1) {
+        state.messages[index] = action.payload;
+      }
+    },
+    removeMessageFromList: (state, action) => {
+      state.messages = state.messages.filter((m) => m._id !== action.payload);
+    },
   },
 });
 
-export const { setChats, setActiveChat, setMessages, addMessage, setOnlineUsers } = chatSlice.actions;
+export const {
+  setChats,
+  setActiveChat,
+  setMessages,
+  addMessage,
+  setOnlineUsers,
+  updateMessageInList,
+  removeMessageFromList,
+} = chatSlice.actions;
 export default chatSlice.reducer;
