@@ -215,7 +215,7 @@ const MessageBubble = ({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M1.5 5.5L5.5 9.5L8.5 6.5M5.5 5.5L9.5 9.5L18.5 1.5" />
+            <path d="M1.5 5.5L5.5 9.5L9.5 5.5M5.5 5.5L9.5 9.5L18.5 1.5" />
           </svg>
         </div>
       );
@@ -234,7 +234,7 @@ const MessageBubble = ({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M1.5 5.5L5.5 9.5L8.5 6.5M5.5 5.5L9.5 9.5L18.5 1.5" />
+            <path d="M1.5 5.5L5.5 9.5L9.5 5.5M5.5 5.5L9.5 9.5L18.5 1.5" />
           </svg>
         ) : (
           <svg
