@@ -21,7 +21,7 @@ import {
   FiInfo,
   FiChevronDown,
 } from "react-icons/fi";
-import MessageBubble from "../MessageBubble/MessageBubble";
+import MessageBubble, { imageBlobCache } from "../MessageBubble/MessageBubble";
 import { format } from "date-fns";
 import { getSocket } from "../../socket/socketClient";
 import api from "../../services/api";
@@ -568,6 +568,9 @@ const ChatWindow = ({ isTyping }) => {
       if (fileToUpload) {
         try {
           uploadedAttachment = await performUpload(fileToUpload);
+          if (uploadedAttachment && uploadedAttachment.url && fileToUpload.previewUrl) {
+            imageBlobCache.set(uploadedAttachment.url, fileToUpload.previewUrl);
+          }
         } catch (err) {
           // On upload failure: remove optimistic bubble, restore staged states and notify
           dispatch(removeMessageFromList(optimisticId));

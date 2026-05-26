@@ -17,37 +17,112 @@ import {
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
+// Global singleton caches to prevent flickering & re-fetching already loaded images
+export const imageBlobCache = new Map(); // cloudUrl -> localBlobUrl
+const loadedImagesCache = new Set(); // url -> boolean
+
+// Helper to inject Cloudinary optimization and thumbnail transformation parameters
+const optimizeCloudinaryUrl = (url, type = "full") => {
+  if (!url || typeof url !== "string") return url;
+  if (!url.includes("res.cloudinary.com")) return url;
+  const splitPattern = "/upload/";
+  if (url.includes(splitPattern)) {
+    const parts = url.split(splitPattern);
+    const transformation = type === "thumb" 
+      ? "upload/c_scale,w_320,q_auto:eco,f_auto/" 
+      : "upload/q_auto,f_auto/";
+    return parts[0] + "/" + transformation + parts[1];
+  }
+  return url;
+};
+
 // Reusable progressive loading component with shimmers & smooth animations
 const ProgressiveImage = ({ src, alt, className, onClick }) => {
   const isBlob = src && src.startsWith("blob:");
-  const [loaded, setLoaded] = useState(isBlob);
+  const resolvedSrc = isBlob ? src : (imageBlobCache.get(src) || src);
+  const cacheKey = resolvedSrc;
+
+  // Determine if this image was already fully loaded in this session
+  const isAlreadyLoaded = loadedImagesCache.has(cacheKey);
+
+  const [loaded, setLoaded] = useState(isAlreadyLoaded || isBlob);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [highResLoaded, setHighResLoaded] = useState(isAlreadyLoaded || isBlob);
 
   useEffect(() => {
-    if (src && src.startsWith("blob:")) {
-      setLoaded(true);
-    } else {
-      setLoaded(false);
-    }
+    const freshSrc = src && src.startsWith("blob:") ? src : (imageBlobCache.get(src) || src);
+    const isCached = loadedImagesCache.has(freshSrc);
+    
+    setLoaded(isCached || freshSrc.startsWith("blob:"));
+    setHighResLoaded(isCached || freshSrc.startsWith("blob:"));
+    setError(false);
   }, [src]);
+
+  const handleRetry = (e) => {
+    e.stopPropagation();
+    setError(false);
+    setRetryCount(prev => prev + 1);
+  };
+
+  const thumbSrc = isBlob ? resolvedSrc : optimizeCloudinaryUrl(resolvedSrc, "thumb");
+  const fullSrc = isBlob ? resolvedSrc : optimizeCloudinaryUrl(resolvedSrc, "full");
+
+  const onFullImageLoad = () => {
+    setLoaded(true);
+    setHighResLoaded(true);
+    loadedImagesCache.add(cacheKey);
+  };
 
   return (
     <div className="relative w-full h-full min-h-[160px] bg-slate-100 dark:bg-white/5 rounded-2xl overflow-hidden flex items-center justify-center border border-slate-200/50 dark:border-white/5 shadow-inner">
-      {!loaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-200/50 dark:bg-white/[0.03] animate-pulse">
-          <div className="w-8 h-8 rounded-full border-[2.5px] border-sky-500 border-t-transparent animate-spin"></div>
+      {/* 1. Shimmer Skeleton Loader */}
+      {!loaded && !error && (
+        <div className="absolute inset-0 shimmer-skeleton flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-[2.5px] border-sky-500/30 border-t-sky-500 animate-spin"></div>
         </div>
       )}
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy"
-        referrerPolicy="no-referrer"
-        onLoad={() => setLoaded(true)}
-        onClick={onClick}
-        className={`${className} transition-all duration-500 ${
-          loaded ? "opacity-100 scale-100" : "opacity-0 scale-95"
-        }`}
-      />
+
+      {/* 2. Error Retry State */}
+      {error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90 dark:bg-slate-900/95 p-4 text-center z-10">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-500 mb-2">
+            Failed to load media
+          </span>
+          <button
+            type="button"
+            onClick={handleRetry}
+            className="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-655 text-white rounded-xl text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 cursor-pointer shadow-md"
+          >
+            Retry Load
+          </button>
+        </div>
+      )}
+
+      {/* 3. Progressive Blur-up Thumbnail */}
+      {!highResLoaded && !error && (
+        <img
+          src={thumbSrc}
+          alt="low res"
+          className={`${className} absolute inset-0 w-full h-full object-cover blur-md scale-[1.05] transition-opacity duration-300 pointer-events-none`}
+        />
+      )}
+
+      {/* 4. Lazy Loaded High-Res Image */}
+      {!error && (
+        <img
+          src={`${fullSrc}${retryCount > 0 ? `?retry=${retryCount}` : ""}`}
+          alt={alt}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onLoad={onFullImageLoad}
+          onError={() => setError(true)}
+          onClick={onClick}
+          className={`${className} transition-all duration-500 ease-out ${
+            highResLoaded ? "opacity-100 blur-0 scale-100" : "opacity-0 scale-95"
+          }`}
+        />
+      )}
     </div>
   );
 };
@@ -62,13 +137,15 @@ const MessageBubble = ({
 }) => {
   const { user } = useSelector((state) => state.auth);
   const { activeChat } = useSelector((state) => state.chat);
-  const isMine = message.sender._id === user._id;
+  const senderId = typeof message.sender === "object" ? message.sender?._id : message.sender;
+  const isMine = senderId === user._id;
 
   const getReceiptStatus = () => {
     if (!isMine || message.isDeleted) return "none";
 
-    const seenBy = message.seenBy || [];
-    const deliveredTo = message.deliveredTo || [];
+    // Safely map seenBy and deliveredTo into array of string user IDs
+    const seenBy = (message.seenBy || []).map((u) => (typeof u === "object" ? u._id : u));
+    const deliveredTo = (message.deliveredTo || []).map((u) => (typeof u === "object" ? u._id : u));
 
     if (activeChat) {
       if (activeChat.isGroupChat) {
@@ -86,9 +163,12 @@ const MessageBubble = ({
 
         return "sent";
       } else {
-        const recipient = activeChat.users?.find((u) => u._id !== user._id);
+        const recipient = activeChat.users?.find((u) => {
+          const uId = typeof u === "object" ? u._id : u;
+          return uId !== user._id;
+        });
         if (!recipient) return "sent";
-        const recipientId = recipient._id;
+        const recipientId = typeof recipient === "object" ? recipient._id : recipient;
 
         if (seenBy.includes(recipientId)) return "seen";
         if (deliveredTo.includes(recipientId)) return "delivered";
@@ -102,13 +182,13 @@ const MessageBubble = ({
   const renderReceipts = () => {
     if (message.isOptimistic) {
       return (
-        <div className="flex items-center text-slate-400 dark:text-slate-500 select-none animate-pulse" title="Sending...">
+        <div className="flex items-center text-white/50 select-none animate-pulse" title="Sending...">
           <svg
-            className="w-3.5 h-3.5"
+            className="w-3 h-3"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5"
+            strokeWidth="3"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -123,14 +203,17 @@ const MessageBubble = ({
     if (status === "none") return null;
 
     if (status === "seen") {
+      // Vibrant WhatsApp-style emerald green tick (extremely bold size, flex-centered, shrink-0, drop shadow)
       return (
-        <div className="flex items-center text-sky-400 dark:text-blue-400 select-none" title="Seen">
+        <div className="flex items-center justify-center w-7 h-7 shrink-0 text-emerald-500 dark:text-emerald-400 select-none drop-shadow-sm" title="Seen">
           <svg
-            className="w-3.5 h-3.5 animate-bounce-once"
+            className="w-7 h-7 shrink-0"
+            width={28}
+            height={28}
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5"
+            strokeWidth="4.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -140,36 +223,25 @@ const MessageBubble = ({
       );
     }
 
-    if (status === "delivered") {
-      return (
-        <div className="flex items-center text-slate-400 dark:text-slate-500 select-none" title="Delivered">
-          <svg
-            className="w-3.5 h-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
-          </svg>
-        </div>
-      );
-    }
-
+    // Softer emerald green for sent/delivered states on sender bubbles (extremely bold size, flex-centered, shrink-0, drop shadow)
     return (
-      <div className="flex items-center text-slate-400 dark:text-slate-500 select-none" title="Sent">
+      <div className="flex items-center justify-center w-7 h-7 shrink-0 text-emerald-500/70 dark:text-emerald-400/60 select-none drop-shadow-sm" title={status === "delivered" ? "Delivered" : "Sent"}>
         <svg
-          className="w-3.5 h-3.5"
+          className="w-7 h-7 shrink-0"
+          width={28}
+          height={28}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="4.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
-          <polyline points="20 6 9 17 4 12"></polyline>
+          {status === "delivered" ? (
+            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
+          ) : (
+            <polyline points="20 6 9 17 4 12"></polyline>
+          )}
         </svg>
       </div>
     );
@@ -338,6 +410,19 @@ const MessageBubble = ({
                     alt={fileName || "Shared Attachment"}
                     className="max-w-xs md:max-w-md max-h-72 object-cover rounded-2xl transition-transform duration-300 group-hover:scale-[1.015]"
                   />
+                  {isImageOrVideoOnly && (
+                    <div className="absolute bottom-2.5 right-2.5 bg-black/45 border border-white/[0.08] backdrop-blur-md px-2 py-0.5 rounded-full flex items-center gap-1.5 text-white/95 z-10 text-[9.5px] select-none font-sans font-medium shadow-sm">
+                      {message.isEdited && (
+                        <span className="text-[8.5px] font-bold uppercase tracking-wider opacity-85">
+                          Edited
+                        </span>
+                      )}
+                      <span>
+                        {format(new Date(message.createdAt), "hh:mm a")}
+                      </span>
+                      {renderReceipts()}
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-2xl">
                     <span className="bg-black/60 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-md select-none backdrop-blur-sm">
                       Click to Zoom
@@ -361,6 +446,19 @@ const MessageBubble = ({
                     controls
                     className="max-w-xs md:max-w-md max-h-80 rounded-2xl focus:outline-none bg-black"
                   />
+                  {isImageOrVideoOnly && (
+                    <div className="absolute bottom-2.5 right-2.5 bg-black/45 border border-white/[0.08] backdrop-blur-md px-2 py-0.5 rounded-full flex items-center gap-1.5 text-white/95 z-10 text-[9.5px] select-none font-sans font-medium shadow-sm">
+                      {message.isEdited && (
+                        <span className="text-[8.5px] font-bold uppercase tracking-wider opacity-85">
+                          Edited
+                        </span>
+                      )}
+                      <span>
+                        {format(new Date(message.createdAt), "hh:mm a")}
+                      </span>
+                      {renderReceipts()}
+                    </div>
+                  )}
                 </div>
               );
             case "audio":
@@ -514,10 +612,23 @@ const MessageBubble = ({
 
         {hasMedia && renderMedia()}
         {!isAutoGeneratedMediaMsg && message.content && (
-          <p className="text-[14.5px] leading-[21px] break-words text-left font-normal tracking-wide">
+          <p className="text-[14.5px] leading-[21px] break-words text-left font-normal tracking-wide font-sans">
             {message.content}
           </p>
         )}
+        
+        {/* Integrated WhatsApp-style Timestamp & Receipts */}
+        <div className={`flex items-center gap-1.5 mt-1 self-end ${isMine ? "text-white/70" : "text-slate-400 dark:text-gray-500"} select-none`}>
+          {message.isEdited && (
+            <span className="text-[9px] font-bold uppercase tracking-wider opacity-85">
+              Edited
+            </span>
+          )}
+          <span className="text-[10px] font-semibold tracking-wide">
+            {format(new Date(message.createdAt), "hh:mm a")}
+          </span>
+          {renderReceipts()}
+        </div>
       </div>
     );
   };
@@ -616,12 +727,12 @@ const MessageBubble = ({
 
               {/* Bubble Container */}
               <div
-                className={`px-4 py-2.5 shadow-sm shadow-black/5 relative group/bubble ${
+                className={`px-3 py-2 md:px-4 md:py-2.5 shadow-[0_1px_0.5px_rgba(0,0,0,0.12)] dark:shadow-[0_1px_0.5px_rgba(0,0,0,0.18)] relative group/bubble ${
                   message.isDeleted
                     ? "bg-gray-100 dark:bg-white/5 border border-slate-200/70 dark:border-white/5 rounded-2xl py-2 px-3.5"
                     : isMine
-                      ? "bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 text-white rounded-[18px] rounded-tr-[4px] border border-white/5"
-                      : "bg-white dark:bg-[#111827]/90 backdrop-blur-md text-slate-700 dark:text-gray-200 rounded-[18px] rounded-tl-[4px] border border-slate-200/50 dark:border-white/5"
+                      ? "bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 text-white rounded-[12px] rounded-tr-[2px] border border-white/5"
+                      : "bg-white dark:bg-[#111827]/90 backdrop-blur-md text-slate-700 dark:text-gray-200 rounded-[12px] rounded-tl-[2px] border border-slate-200/50 dark:border-white/5"
                 }`}
               >
                 {renderBubbleContent()}
@@ -662,14 +773,14 @@ const MessageBubble = ({
             </div>
           )}
 
-          {/* Footer Metrics (Time, Reactions, Edited Tag) */}
-          <div
-            className={`flex flex-wrap gap-2 items-center mt-1.5 px-1.5 ${
-              isMine ? "justify-end" : "justify-start"
-            }`}
-          >
-            {/* Reaction Pills Overlay */}
-            {reactionCounts.length > 0 && (
+          {/* Footer Metrics (Reactions Only - Metadata inside Bubble) */}
+          {reactionCounts.length > 0 && (
+            <div
+              className={`flex flex-wrap gap-2 items-center mt-1.5 px-1.5 ${
+                isMine ? "justify-end" : "justify-start"
+              }`}
+            >
+              {/* Reaction Pills Overlay */}
               <div className="flex flex-wrap gap-1 mb-0.5 select-none">
                 {reactionCounts.map(({ emoji, count, hasMyReaction }) => (
                   <button
@@ -687,21 +798,8 @@ const MessageBubble = ({
                   </button>
                 ))}
               </div>
-            )}
-
-            {/* Edited Label */}
-            {message.isEdited && !message.isDeleted && (
-              <span className="text-[9.5px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider">
-                Edited
-              </span>
-            )}
-
-            {/* Time & Receipts */}
-            <span className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wide">
-              {format(new Date(message.createdAt), "hh:mm a")}
-            </span>
-            {renderReceipts()}
-          </div>
+            </div>
+          )}
 
           {/* ── Premium Context Menu Panel overlay ── */}
           <AnimatePresence>
@@ -865,7 +963,7 @@ const MessageBubble = ({
                   src={primaryAttachment?.url || message.mediaUrl}
                   alt="Lightbox View"
                   referrerPolicy="no-referrer"
-                  style={{ scale: zoomLevel }}
+                  animate={{ scale: zoomLevel }}
                   transition={{ type: "spring", damping: 25, stiffness: 200 }}
                   className="max-w-[90vw] max-h-[65vh] object-contain rounded-2xl border border-white/5 shadow-2xl pointer-events-none"
                 />

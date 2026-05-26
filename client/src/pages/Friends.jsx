@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiUserPlus, 
@@ -12,6 +12,7 @@ import {
   FiMessageSquare,
   FiFilter,
   FiGrid,
+  FiList,
   FiGlobe,
   FiChevronRight
 } from 'react-icons/fi';
@@ -36,6 +37,27 @@ const Friends = () => {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'online', 'offline'
+  const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list'
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+
+  const filterDropdownRef = useRef(null);
+  const filterButtonRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        filterDropdownRef.current && 
+        !filterDropdownRef.current.contains(event.target) &&
+        filterButtonRef.current &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        setShowFilterDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Fetch Friends and Pending Requests
   const fetchData = async () => {
@@ -168,7 +190,14 @@ const Friends = () => {
 
   // Get recent contacts (last 4 friends, sorted by some criteria)
   const recentContacts = friends.slice(0, 4);
-  const visibleFriends = friends.slice(0, visibleCount);
+
+  const filteredFriends = friends.filter((friend) => {
+    if (statusFilter === 'online') return friend.status === 'online';
+    if (statusFilter === 'offline') return friend.status !== 'online';
+    return true;
+  });
+
+  const visibleFriends = filteredFriends.slice(0, visibleCount);
 
   return (
     <div className="flex-1 h-full bg-white dark:bg-gray-900 overflow-y-auto">
@@ -242,26 +271,79 @@ const Friends = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 relative">
             {/* Add New Friend Button */}
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm cursor-pointer select-none active:scale-95"
             >
               <FiUserPlus size={16} />
-              <span>Add New Friend</span>
+              <span>Add Friend</span>
             </button>
 
-            {/* Filter */}
-            <button className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <FiFilter size={15} />
-              <span>Filter</span>
-            </button>
+            {/* Dynamic Filter Dropdown */}
+            <div className="relative">
+              <button 
+                ref={filterButtonRef}
+                onClick={() => setShowFilterDropdown(prev => !prev)}
+                className={`flex items-center gap-2 px-4 py-2.5 border text-sm font-medium rounded-lg transition-colors cursor-pointer select-none active:scale-95 ${
+                  statusFilter !== 'all' 
+                    ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                    : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                }`}
+              >
+                <FiFilter size={15} />
+                <span>
+                  {statusFilter === 'all' && 'Filter'}
+                  {statusFilter === 'online' && 'Online'}
+                  {statusFilter === 'offline' && 'Offline'}
+                </span>
+              </button>
+              
+              <AnimatePresence>
+                {showFilterDropdown && (
+                  <motion.div
+                    ref={filterDropdownRef}
+                    initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 z-20 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl overflow-hidden py-1"
+                  >
+                    {[
+                      { id: 'all', label: 'All Friends' },
+                      { id: 'online', label: 'Online Only' },
+                      { id: 'offline', label: 'Offline Only' }
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => {
+                          setStatusFilter(opt.id);
+                          setShowFilterDropdown(false);
+                          setVisibleCount(6); // reset pagination when filter shifts
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer ${
+                          statusFilter === opt.id 
+                            ? 'text-blue-600 dark:text-blue-400 bg-blue-50/20 dark:bg-blue-950/10' 
+                            : 'text-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        {statusFilter === opt.id && <FiCheck size={12} className="text-blue-600 dark:text-blue-400" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-            {/* Grid View */}
-            <button className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <FiGrid size={15} />
-              <span>Grid View</span>
+            {/* Dynamic Grid / List Layout Selector */}
+            <button 
+              onClick={() => setViewMode(prev => prev === 'grid' ? 'list' : 'grid')}
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer select-none active:scale-95"
+            >
+              {viewMode === 'grid' ? <FiList size={15} /> : <FiGrid size={15} />}
+              <span>{viewMode === 'grid' ? 'List View' : 'Grid View'}</span>
             </button>
           </div>
         </div>
@@ -321,8 +403,8 @@ const Friends = () => {
                     All Friends
                   </h2>
                 </div>
-                <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-lg border border-blue-100 dark:border-blue-900/40">
-                  {friends.length} Friends
+                <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-lg border border-blue-100 dark:border-blue-900/40 select-none">
+                  {statusFilter === 'all' ? `${friends.length} Friends` : `Showing ${filteredFriends.length} of ${friends.length} Friends`}
                 </span>
               </div>
 
@@ -335,14 +417,16 @@ const Friends = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "flex flex-col gap-3.5 max-w-2xl mx-auto w-full"}>
                   {visibleFriends.map((friend) => (
                     <motion.div 
                       key={friend._id}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      whileHover={{ scale: 1.01 }}
-                      className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm transition-all group"
+                      whileHover={{ scale: 1.008 }}
+                      className={`flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm transition-all group ${
+                        viewMode === 'list' ? 'px-6 shadow-sm' : ''
+                      }`}
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="relative shrink-0">
@@ -390,11 +474,11 @@ const Friends = () => {
               )}
 
               {/* Load More Button */}
-              {visibleCount < friends.length && (
+              {visibleCount < filteredFriends.length && (
                 <div className="flex justify-center mt-8">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 6)}
-                    className="px-6 py-2.5 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-sm font-semibold rounded-full hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
+                    className="px-6 py-2.5 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 text-sm font-semibold rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors cursor-pointer select-none active:scale-95"
                   >
                     Load More Friends
                   </button>
