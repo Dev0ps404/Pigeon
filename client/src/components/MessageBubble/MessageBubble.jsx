@@ -18,7 +18,7 @@ import {
 import toast from "react-hot-toast";
 
 // Global singleton caches to prevent flickering & re-fetching already loaded images
-export const imageBlobCache = new Map(); // cloudUrl -> localBlobUrl
+import { imageBlobCache } from "../../utils/imageBlobCache";
 const loadedImagesCache = new Set(); // url -> boolean
 
 // Helper to inject Cloudinary optimization and thumbnail transformation parameters

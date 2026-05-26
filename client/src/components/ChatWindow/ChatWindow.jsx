@@ -21,7 +21,8 @@ import {
   FiInfo,
   FiChevronDown,
 } from "react-icons/fi";
-import MessageBubble, { imageBlobCache } from "../MessageBubble/MessageBubble";
+import MessageBubble from "../MessageBubble/MessageBubble";
+import { imageBlobCache } from "../../utils/imageBlobCache";
 import { format } from "date-fns";
 import { getSocket } from "../../socket/socketClient";
 import api from "../../services/api";
