@@ -203,17 +203,15 @@ const MessageBubble = ({
     if (status === "none") return null;
 
     if (status === "seen") {
-      // Vibrant WhatsApp-style emerald green tick (extremely bold size, flex-centered, shrink-0, drop shadow)
+      // Vibrant WhatsApp-style sky blue double ticks for read receipts
       return (
-        <div className="flex items-center justify-center w-7 h-7 shrink-0 text-emerald-500 dark:text-emerald-400 select-none drop-shadow-sm" title="Seen">
+        <div className="flex items-center justify-center w-4.5 h-4.5 shrink-0 text-[#53bdeb] select-none" title="Seen">
           <svg
-            className="w-7 h-7 shrink-0"
-            width={28}
-            height={28}
+            className="w-4 h-4 shrink-0"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="4.5"
+            strokeWidth="2.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -223,17 +221,15 @@ const MessageBubble = ({
       );
     }
 
-    // Softer emerald green for sent/delivered states on sender bubbles (extremely bold size, flex-centered, shrink-0, drop shadow)
+    // Soft gray double ticks for delivered, soft gray single tick for sent
     return (
-      <div className="flex items-center justify-center w-7 h-7 shrink-0 text-emerald-500/70 dark:text-emerald-400/60 select-none drop-shadow-sm" title={status === "delivered" ? "Delivered" : "Sent"}>
+      <div className="flex items-center justify-center w-4.5 h-4.5 shrink-0 text-white/60 dark:text-slate-300/60 select-none" title={status === "delivered" ? "Delivered" : "Sent"}>
         <svg
-          className="w-7 h-7 shrink-0"
-          width={28}
-          height={28}
+          className="w-4 h-4 shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="4.5"
+          strokeWidth="2.2"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
