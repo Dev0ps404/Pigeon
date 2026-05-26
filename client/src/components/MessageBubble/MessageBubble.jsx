@@ -205,17 +205,17 @@ const MessageBubble = ({
     if (status === "seen") {
       // Vibrant WhatsApp-style sky blue double ticks for read receipts
       return (
-        <div className="flex items-center justify-center w-4.5 h-4.5 shrink-0 text-[#53bdeb] select-none" title="Seen">
+        <div className="flex items-center justify-center shrink-0 text-[#53bdeb] select-none" title="Seen">
           <svg
-            className="w-4 h-4 shrink-0"
-            viewBox="0 0 24 24"
+            className="w-[19px] h-[10px] shrink-0"
+            viewBox="0 0 20 11"
             fill="none"
             stroke="currentColor"
             strokeWidth="2.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
+            <path d="M1.5 5.5L5.5 9.5L8.5 6.5M5.5 5.5L9.5 9.5L18.5 1.5" />
           </svg>
         </div>
       );
@@ -223,22 +223,32 @@ const MessageBubble = ({
 
     // Soft gray double ticks for delivered, soft gray single tick for sent
     return (
-      <div className="flex items-center justify-center w-4.5 h-4.5 shrink-0 text-white/60 dark:text-slate-300/60 select-none" title={status === "delivered" ? "Delivered" : "Sent"}>
-        <svg
-          className="w-4 h-4 shrink-0"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {status === "delivered" ? (
-            <path d="M7 12l5 5L22 7M2 12l5 5L13 11" />
-          ) : (
-            <polyline points="20 6 9 17 4 12"></polyline>
-          )}
-        </svg>
+      <div className="flex items-center justify-center shrink-0 text-white/60 dark:text-slate-300/60 select-none" title={status === "delivered" ? "Delivered" : "Sent"}>
+        {status === "delivered" ? (
+          <svg
+            className="w-[19px] h-[10px] shrink-0"
+            viewBox="0 0 20 11"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M1.5 5.5L5.5 9.5L8.5 6.5M5.5 5.5L9.5 9.5L18.5 1.5" />
+          </svg>
+        ) : (
+          <svg
+            className="w-[15px] h-[10px] shrink-0"
+            viewBox="0 0 16 11"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M1.5 5.5L5.5 9.5L14.5 1.5" />
+          </svg>
+        )}
       </div>
     );
   };
